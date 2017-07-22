@@ -1,0 +1,12 @@
+{
+  "name": "contracts",
+  "version": "0.1.0",
+  "description": "Token contracts of ALIS.",
+  "main": "index.js",
+  "repository": "https://github.com/AlisProject/contracts",
+  "author": "sot528 <sot528@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "truffle": "^3.4.5"
+  }
+}
