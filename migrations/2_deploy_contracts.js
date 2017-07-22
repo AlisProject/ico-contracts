@@ -1,8 +1,7 @@
-var ConvertLib = artifacts.require("./ConvertLib.sol");
-var MetaCoin = artifacts.require("./MetaCoin.sol");
+const fs = require('fs');
+const AlisToken = artifacts.require('AlisToken.sol');
+const initParams = JSON.parse(fs.readFileSync('../config/AlisToken.json', 'utf8'));
 
 module.exports = function (deployer) {
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
+  deployer.deploy(AlisToken, initParams.amount, initParams.name, initParams.decimal, initParams.symbol);
 };

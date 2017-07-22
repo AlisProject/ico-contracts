@@ -11,6 +11,11 @@
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.7.0",
+    "fs": "^0.0.1-security",
     "truffle": "^3.4.5"
+  },
+  "scripts": {
+    "clean": "rm -rf ./build/*  && yarn truffle networks --clean",
+    "deploy": "yarn run clean && yarn truffle compile && truffle deploy --network development"
   }
 }
