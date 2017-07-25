@@ -2,6 +2,5 @@
   "symbol": "ALIS",
   "name": "AlisToken",
   "initialAmount": 500000000,
-  "offeredAmount": 250000000,
   "decimal": 18
 }

@@ -24,9 +24,15 @@ contract('Crowdsale', () => {
       },
     ));
 
+    it('should has offered ALIS Token amount 250,000,000', () => crowdSale.offeredAmount().then(
+      (offeredAmount) => {
+        assert.equal(offeredAmount, 250000000, `wrong amount: ${offeredAmount}`);
+      },
+    ));
+
     it('should has exchange rate 2,080 of ETH to ALIS', () => crowdSale.rate().then(
       (rate) => {
-        assert.equal(rate, 2080, `wrong fund address: ${rate}`);
+        assert.equal(rate, 2080, `wrong rate: ${rate}`);
       },
     ));
   });
