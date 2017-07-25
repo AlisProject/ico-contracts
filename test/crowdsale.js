@@ -23,5 +23,11 @@ contract('Crowdsale', () => {
         assert.equal(fund, '0x0000000000000000000000000000000000000000', `wrong fund address: ${fund}`);
       },
     ));
+
+    it('should has exchange rate 2,080 of ETH to ALIS', () => crowdSale.rate().then(
+      (rate) => {
+        assert.equal(rate, 2080, `wrong fund address: ${rate}`);
+      },
+    ));
   });
 });

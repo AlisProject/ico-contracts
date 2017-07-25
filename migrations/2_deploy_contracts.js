@@ -11,5 +11,5 @@ module.exports = function deployContracts(deployer) {
 
   return deployer.deploy(AlisToken, actualInitialAmount, tokenParams.name, tokenParams.decimal,
     tokenParams.symbol, actualOfferedAmount).then(
-    () => deployer.deploy(Crowdsale, AlisToken.address, crowdsaleParams.fundAddress));
+    () => deployer.deploy(Crowdsale, AlisToken.address, crowdsaleParams.fundAddress, crowdsaleParams.initialRate));
 };
