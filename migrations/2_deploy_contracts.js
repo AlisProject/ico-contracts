@@ -7,9 +7,10 @@ const crowdsaleParams = JSON.parse(fs.readFileSync('../config/Crowdsale.json', '
 
 module.exports = function deployContracts(deployer) {
   const actualInitialAmount = tokenParams.initialAmount * (10 ** tokenParams.decimal);
+  const actualOfferedAmount = crowdsaleParams.offeredAmount * (10 ** tokenParams.decimal);
 
   return deployer.deploy(AlisToken, actualInitialAmount, tokenParams.name, tokenParams.decimal,
     tokenParams.symbol).then(
-    () => deployer.deploy(Crowdsale, AlisToken.address, crowdsaleParams.fundAddress, crowdsaleParams.offeredAmount,
+    () => deployer.deploy(Crowdsale, AlisToken.address, crowdsaleParams.fundAddress, actualOfferedAmount,
       crowdsaleParams.initialRate));
 };

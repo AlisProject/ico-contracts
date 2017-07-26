@@ -2,6 +2,11 @@
 const AlisToken = artifacts.require('AlisToken.sol');
 const Crowdsale = artifacts.require('Crowdsale.sol');
 
+// FIXME
+function toIntOfToken(value, decimal) {
+  return value / (10 ** decimal);
+}
+
 contract('Crowdsale', () => {
   let crowdSale; // Deployed CrowdSale.
 
@@ -26,7 +31,7 @@ contract('Crowdsale', () => {
 
     it('should has offered ALIS Token amount 250,000,000', () => crowdSale.offeredAmount().then(
       (offeredAmount) => {
-        assert.equal(offeredAmount, 250000000, `wrong amount: ${offeredAmount}`);
+        assert.equal(toIntOfToken(offeredAmount, 18), 250000000, `wrong amount: ${offeredAmount}`);
       },
     ));
 
