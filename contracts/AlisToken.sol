@@ -2,9 +2,10 @@ pragma solidity ^0.4.11;
 
 
 import "tokens/HumanStandardToken.sol";
+import "zeppelin/contracts/ownership/Ownable.sol";
 
 
-contract AlisToken is HumanStandardToken {
+contract AlisToken is HumanStandardToken, Ownable {
 
   function AlisToken(
   uint256 _initialAmount,
