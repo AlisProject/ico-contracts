@@ -11,12 +11,14 @@
     "eslint": "^4.3.0",
     "eslint-config-airbnb-base": "^11.2.0",
     "eslint-plugin-import": "^2.7.0",
+    "ethereumjs-testrpc": "^4.0.1",
     "fs": "^0.0.1-security",
     "truffle": "^3.4.5"
   },
   "scripts": {
     "lint": "yarn run eslint . -- --fix",
     "clean": "rm -rf ./build/*  && yarn truffle networks --clean",
+    "rpc": "yarn run testrpc -a 3 -i 10 -u 0 -u 1 -u 3",
     "deploy": "yarn run clean && yarn truffle compile && truffle deploy --network development"
   }
 }
