@@ -1,0 +1,19 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.1.4
+    working_directory: ~/contracts
+    steps:
+      - checkout
+      - run:
+          name: dependencies
+          command: |
+            yarn
+            yarn truffle install
+      - run:
+          name: compile
+          command: yarn truffle compile
+      - run:
+          name: test
+          command: yarn run eslint .
