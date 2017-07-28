@@ -1,21 +1,22 @@
 /* global it */
-const AlisToken = artifacts.require('AlisToken.sol');
-const Crowdsale = artifacts.require('Crowdsale.sol');
+let AlisToken = artifacts.require('AlisToken.sol');
+let AlisCrowdSale = artifacts.require('AlisCrowdSale.sol');
 
 // FIXME
 function toIntOfToken(value, decimal) {
   return value / (10 ** decimal);
 }
 
-contract('Crowdsale', () => {
-  let crowdSale; // Deployed CrowdSale.
+contract('CrowdSale', () => {
+  let crowdsale; // Deployed AlisCrowdSale.
 
   describe('CONTRACT DEPLOYMENT', () => {
-    it('should has deployed address of AlisToken', () => Crowdsale.deployed().then(
+    it('should has deployed address of AlisToken', () => AlisCrowdSale.deployed().then(
       (instance) => {
-        crowdSale = instance;
+        crowdsale = instance;
+        console.log(AlisToken.address);
 
-        return crowdSale.token().then(
+        return crowdsale.token().then(
           (tokenAddress) => {
             assert.equal(AlisToken.address, tokenAddress, `wrong token address: ${tokenAddress}`);
           },
@@ -23,19 +24,19 @@ contract('Crowdsale', () => {
       },
     ));
 
-    it('should has specified address of AlisFund', () => crowdSale.fund().then(
+    it('should has specified address of AlisFund', () => crowdsale.fund().then(
       (fund) => {
         assert.equal(fund, '0x0000000000000000000000000000000000000000', `wrong fund address: ${fund}`);
       },
     ));
 
-    it('should has offered ALIS Token amount 250,000,000', () => crowdSale.offeredAmount().then(
+    it('should has offered ALIS Token amount 250,000,000', () => crowdsale.offeredAmount().then(
       (offeredAmount) => {
         assert.equal(toIntOfToken(offeredAmount, 18), 250000000, `wrong amount: ${offeredAmount}`);
       },
     ));
 
-    it('should has exchange rate 2,080 of ETH to ALIS', () => crowdSale.rate().then(
+    it('should has exchange rate 2,080 of ETH to ALIS', () => crowdsale.rate().then(
       (rate) => {
         assert.equal(rate, 2080, `wrong rate: ${rate}`);
       },

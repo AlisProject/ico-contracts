@@ -6,28 +6,17 @@ import 'zeppelin/contracts/token/MintableToken.sol';
 
 contract AlisToken is MintableToken {
 
-  string public name;
+  string public name = 'AlisToken';
 
-  string public symbol;
+  string public symbol = 'ALIS';
 
-  uint public decimals;
+  uint public decimals = 18;
 
-  address public multisig;
+  //  address public multisig;
 
   function AlisToken(
-  uint256 _initialAmount,
-  string _tokenName,
-  uint8 _decimalUnits,
-  string _tokenSymbol
   )
+  MintableToken()
   {
-    name = _tokenName;
-    symbol = _tokenSymbol;
-    decimals = _decimalUnits;
-
-    // FIXME
-    multisig = 0x0;
-
-    balances[msg.sender] = _initialAmount;
   }
 }
