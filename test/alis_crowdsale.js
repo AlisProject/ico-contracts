@@ -3,7 +3,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 const AlisToken = artifacts.require('AlisToken.sol');
-const Crowdsale = artifacts.require('AlisCrowdSale.sol');
+const Crowdsale = artifacts.require('AlisCrowdsale.sol');
 
 const BigNumber = web3.BigNumber;
 
@@ -12,7 +12,7 @@ const should = require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('AlisCrowdSale', ([investor, wallet, purchaser]) => {
+contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   const rate = new BigNumber(1000);
   const value = ether(42);
 
