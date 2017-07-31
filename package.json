@@ -24,6 +24,7 @@
     "truffle": "^3.4.5"
   },
   "scripts": {
+    "test": "scripts/test.sh",
     "lint": "yarn run eslint . -- --fix",
     "clean": "rm -rf ./build/*  && yarn truffle networks --clean",
     "rpc": "yarn run testrpc -a 3 -i 10 -u 0 -u 1 -u 3",
