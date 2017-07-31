@@ -9,6 +9,7 @@
     "airbnb-base"
   ],
   "rules": {
+    "func-names": 0,
     "no-undef": 0,
     "import/extensions": [
       "off",
