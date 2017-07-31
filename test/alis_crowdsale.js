@@ -1,45 +1,135 @@
-/* global it */
-let AlisToken = artifacts.require('AlisToken.sol');
-let AlisCrowdSale = artifacts.require('AlisCrowdSale.sol');
+import ether from './helpers/ether';
+import advanceToBlock from './helpers/advanceToBlock';
+import EVMThrow from './helpers/EVMThrow';
 
-// FIXME
-function toIntOfToken(value, decimal) {
-  return value / (10 ** decimal);
-}
+const AlisToken = artifacts.require('AlisToken.sol');
+const Crowdsale = artifacts.require('AlisCrowdSale.sol');
 
-contract('CrowdSale', () => {
-  let crowdsale; // Deployed AlisCrowdSale.
+const BigNumber = web3.BigNumber;
 
-  describe('CONTRACT DEPLOYMENT', () => {
-    it('should has deployed address of AlisToken', () => AlisCrowdSale.deployed().then(
-      (instance) => {
-        crowdsale = instance;
-        console.log(AlisToken.address);
+const should = require('chai')
+  .use(require('chai-as-promised'))
+  .use(require('chai-bignumber')(BigNumber))
+  .should();
 
-        return crowdsale.token().then(
-          (tokenAddress) => {
-            assert.equal(AlisToken.address, tokenAddress, `wrong token address: ${tokenAddress}`);
-          },
-        );
-      },
-    ));
+contract('AlisCrowdSale', ([investor, wallet, purchaser]) => {
+  const rate = new BigNumber(1000);
+  const value = ether(42);
 
-    it('should has specified address of AlisFund', () => crowdsale.fund().then(
-      (fund) => {
-        assert.equal(fund, '0x0000000000000000000000000000000000000000', `wrong fund address: ${fund}`);
-      },
-    ));
+  const expectedTokenAmount = rate.mul(value);
 
-    it('should has offered ALIS Token amount 250,000,000', () => crowdsale.offeredAmount().then(
-      (offeredAmount) => {
-        assert.equal(toIntOfToken(offeredAmount, 18), 250000000, `wrong amount: ${offeredAmount}`);
-      },
-    ));
+  beforeEach(async function () {
+    this.startBlock = web3.eth.blockNumber + 10;
+    this.endBlock = web3.eth.blockNumber + 20;
 
-    it('should has exchange rate 2,080 of ETH to ALIS', () => crowdsale.rate().then(
-      (rate) => {
-        assert.equal(rate, 2080, `wrong rate: ${rate}`);
-      },
-    ));
+    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet);
+
+    this.token = AlisToken.at(await this.crowdsale.token());
+  });
+
+  it('should be token owner', async function () {
+    const owner = await this.token.owner();
+    owner.should.equal(this.crowdsale.address);
+  });
+
+  it('should be ended only after end', async function () {
+    let ended = await this.crowdsale.hasEnded();
+    ended.should.equal(false);
+    await advanceToBlock(this.endBlock + 1);
+    ended = await this.crowdsale.hasEnded();
+    ended.should.equal(true);
+  });
+
+  describe('accepting payments', () => {
+    it('should reject payments before start', async function () {
+      await this.crowdsale.send(value).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.buyTokens(investor, { from: purchaser, value }).should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should accept payments after start', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.send(value).should.be.fulfilled;
+      await this.crowdsale.buyTokens(investor, { value, from: purchaser }).should.be.fulfilled;
+    });
+
+    it('should reject payments after end', async function () {
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.send(value).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.buyTokens(investor, { value, from: purchaser }).should.be.rejectedWith(EVMThrow);
+    });
+  });
+
+  describe('high-level purchase', () => {
+    beforeEach(async function () {
+      await advanceToBlock(this.startBlock);
+    });
+
+    it('should log purchase', async function () {
+      const { logs } = await this.crowdsale.sendTransaction({ value, from: investor });
+
+      const event = logs.find(e => e.event === 'TokenPurchase');
+
+      should.exist(event);
+      event.args.purchaser.should.equal(investor);
+      event.args.beneficiary.should.equal(investor);
+      event.args.value.should.be.bignumber.equal(value);
+      event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should increase totalSupply', async function () {
+      await this.crowdsale.send(value);
+      const totalSupply = await this.token.totalSupply();
+      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should assign tokens to sender', async function () {
+      await this.crowdsale.sendTransaction({ value, from: investor });
+      const balance = await this.token.balanceOf(investor);
+      balance.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should forward funds to wallet', async function () {
+      const pre = web3.eth.getBalance(wallet);
+      await this.crowdsale.sendTransaction({ value, from: investor });
+      const post = web3.eth.getBalance(wallet);
+      post.minus(pre).should.be.bignumber.equal(value);
+    });
+  });
+
+  describe('low-level purchase', () => {
+    beforeEach(async function () {
+      await advanceToBlock(this.startBlock);
+    });
+
+    it('should log purchase', async function () {
+      const { logs } = await this.crowdsale.buyTokens(investor, { value, from: purchaser });
+
+      const event = logs.find(e => e.event === 'TokenPurchase');
+
+      should.exist(event);
+      event.args.purchaser.should.equal(purchaser);
+      event.args.beneficiary.should.equal(investor);
+      event.args.value.should.be.bignumber.equal(value);
+      event.args.amount.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should increase totalSupply', async function () {
+      await this.crowdsale.buyTokens(investor, { value, from: purchaser });
+      const totalSupply = await this.token.totalSupply();
+      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should assign tokens to beneficiary', async function () {
+      await this.crowdsale.buyTokens(investor, { value, from: purchaser });
+      const balance = await this.token.balanceOf(investor);
+      balance.should.be.bignumber.equal(expectedTokenAmount);
+    });
+
+    it('should forward funds to wallet', async function () {
+      const pre = web3.eth.getBalance(wallet);
+      await this.crowdsale.buyTokens(investor, { value, from: purchaser });
+      const post = web3.eth.getBalance(wallet);
+      post.minus(pre).should.be.bignumber.equal(value);
+    });
   });
 });
