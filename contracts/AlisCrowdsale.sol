@@ -14,7 +14,6 @@ contract AlisCrowdsale is Crowdsale {
   function AlisCrowdsale(uint256 start, uint256 end, uint _rate, address _fundAddress)
   Crowdsale(start, end, _rate, _fundAddress)
   {
-//    token = AlisToken(_AlisTokenAddress);
     token = createTokenContract();
   }
 

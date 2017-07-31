@@ -21,11 +21,12 @@
     "eslint-plugin-import": "^2.7.0",
     "ethereumjs-testrpc": "^4.0.1",
     "fs": "^0.0.1-security",
+    "solium": "^0.5.4",
     "truffle": "^3.4.5"
   },
   "scripts": {
     "test": "scripts/test.sh",
-    "lint": "yarn run eslint . -- --fix",
+    "lint": "yarn run eslint . -- --fix && yarn solium -- --dir ./contracts",
     "clean": "rm -rf ./build/*  && yarn truffle networks --clean",
     "rpc": "yarn run testrpc -a 3 -i 10 -u 0 -u 1 -u 3",
     "deploy": "yarn run clean && yarn truffle compile && truffle deploy --network development"
