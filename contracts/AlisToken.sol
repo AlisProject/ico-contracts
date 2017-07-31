@@ -1,19 +1,22 @@
 pragma solidity ^0.4.11;
 
 
-import "tokens/HumanStandardToken.sol";
-import "zeppelin/contracts/ownership/Ownable.sol";
+import 'zeppelin/contracts/token/MintableToken.sol';
 
 
-contract AlisToken is HumanStandardToken, Ownable {
+contract AlisToken is MintableToken {
+
+  string public name = 'AlisToken';
+
+  string public symbol = 'ALIS';
+
+  uint public decimals = 18;
+
+  //  address public multisig;
 
   function AlisToken(
-  uint256 _initialAmount,
-  string _tokenName,
-  uint8 _decimalUnits,
-  string _tokenSymbol
   )
-  HumanStandardToken(_initialAmount, _tokenName, _decimalUnits, _tokenSymbol)
+  MintableToken()
   {
   }
 }

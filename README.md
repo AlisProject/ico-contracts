@@ -1,9 +1,10 @@
-Contracts
-===
-Token contracts of ALIS.
+# Contracts
+[![CircleCI](https://circleci.com/gh/AlisProject/contracts/tree/master.svg?style=svg)](https://circleci.com/gh/AlisProject/contracts/tree/master)
+
+Contracts of ALIS.
 
 # Usage
 
 1. git clone
 1. `yarn`
-2. `yarn truffle install`
+1. `yarn truffle install`

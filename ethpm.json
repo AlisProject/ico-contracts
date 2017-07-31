@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "tokens": "^0.0.2",
-    "zeppelin": "^1.0.5"
+    "zeppelin": "^1.2.0"
   }
 }
