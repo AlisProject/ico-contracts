@@ -14,5 +14,5 @@ module.exports = function deployContracts(deployer) {
   deployer.deploy(AlisToken);
   deployer.link(AlisToken, AlisCrowdsale);
   // TODO: start & end block.
-  deployer.deploy(AlisCrowdsale, 900000, 1000000, crowdsaleParams.initialRate, crowdsaleParams.fundAddress);
+  deployer.deploy(AlisCrowdsale, 900000, 1000000, crowdsaleParams.initialRate, crowdsaleParams.fundAddress, 500000000);
 };
