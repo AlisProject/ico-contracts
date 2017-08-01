@@ -1,3 +1,4 @@
+import alis from '../utilities/alis';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
@@ -15,14 +16,11 @@ const should = require('chai')
   .should();
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
-  // TODO: improve decimal calculation.
-  const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
+  const cap = alis(crowdsaleParams.cap);
   const rate = new BigNumber(crowdsaleParams.rate);
-  const initialAlisFundBalance = new BigNumber(
-    crowdsaleParams.initialAlisFundBalance).mul(10 ** 18);
+  const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 
-  // FIXME:
-  const value = new BigNumber(42 * (10 ** 18));
+  const value = alis(42);
 
   const expectedTokenAmount = rate.mul(value);
   const expectedInitialTokenAmount = expectedTokenAmount.add(initialAlisFundBalance);
@@ -71,22 +69,19 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     });
 
     it('should fund has 250 million tokens.', async function () {
-      // FIXME:
-      const expect = new BigNumber((250000000 * (10 ** 18)));
+      const expect = alis(250000000);
       const actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
     });
 
     it('should total supply be 250 million tokens.', async function () {
-      // FIXME:
-      const expect = new BigNumber((250000000 * (10 ** 18)));
+      const expect = alis(250000000);
       const actual = await this.token.totalSupply();
       await actual.should.be.bignumber.equal(expect);
     });
 
     it('should offering amount be 250 million tokens.', async function () {
-      // FIXME:
-      const expect = new BigNumber((250000000 * (10 ** 18)));
+      const expect = alis(250000000);
       const totalSupply = await this.token.totalSupply();
       const crowdSaleCap = await this.crowdsale.cap();
       const actual = crowdSaleCap.sub(totalSupply);
