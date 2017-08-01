@@ -1,7 +1,9 @@
-import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
+const fs = require('fs');
+
+const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'utf8'));
 const BigNumber = web3.BigNumber;
 
 require('chai')
@@ -13,14 +15,22 @@ const AlisCrowdsale = artifacts.require('AlisCrowdsale');
 const AlisToken = artifacts.require('AlisToken');
 
 contract('AlisCrowdsale', ([wallet]) => {
-  const rate = new BigNumber(1000);
+  // TODO: improve decimal calculation.
+  const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
+  const rate = crowdsaleParams.rate;
 
-  const cap = ether(300);
-  const lessThanCap = ether(60);
+  const lessThanCap = cap.div(5);
 
   describe('creating a valid crowdsale', () => {
     it('should fail with zero cap', async function () {
       await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0).should.be.rejectedWith(EVMThrow);
+    });
+
+    // Total supply of ALIS token should 500 million.
+    it('should total supply of ALIS token be 500 million', async function () {
+      const expect = (500000000 * (10 ** 18));
+      const tokenCap = await this.crowdsale.cap();
+      await tokenCap.toNumber().should.be.equal(expect);
     });
   });
 
