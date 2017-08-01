@@ -26,7 +26,6 @@ contract('AlisCrowdsale', ([wallet]) => {
       await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0).should.be.rejectedWith(EVMThrow);
     });
 
-    // Total supply of ALIS token should 500 million.
     it('should total supply of ALIS token be 500 million', async function () {
       const expect = (500000000 * (10 ** 18));
       const tokenCap = await this.crowdsale.cap();

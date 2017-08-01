@@ -10,14 +10,6 @@ contract AlisToken is MintableToken {
 
   string public constant symbol = 'ALIS';
 
-  uint public constant decimals = 18;
-
   // TODO:
-  //  address public multisig;
-
-  function AlisToken(
-  )
-  MintableToken()
-  {
-  }
+  uint public constant decimals = 18;
 }
