@@ -76,6 +76,22 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       const actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
     });
+
+    it('should total supply be 250 million tokens.', async function () {
+      // FIXME:
+      const expect = new BigNumber((250000000 * (10 ** 18)));
+      const actual = await this.token.totalSupply();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should offering amount be 250 million tokens.', async function () {
+      // FIXME:
+      const expect = new BigNumber((250000000 * (10 ** 18)));
+      const totalSupply = await this.token.totalSupply();
+      const crowdSaleCap = await this.crowdsale.cap();
+      const actual = crowdSaleCap.sub(totalSupply);
+      await actual.should.be.bignumber.equal(expect);
+    });
   });
 
   it('should be token owner', async function () {
