@@ -1,4 +1,3 @@
-import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
@@ -18,12 +17,15 @@ const should = require('chai')
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   // TODO: improve decimal calculation.
   const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
+  const initialFundAmount = new BigNumber(250000000 * (10 ** 18));
   const rate = new BigNumber(crowdsaleParams.rate);
   const fund = crowdsaleParams.fundAddress;
 
-  const value = ether(42);
+  // FIXME:
+  const value = new BigNumber(42 * (10 ** 18));
 
   const expectedTokenAmount = rate.mul(value);
+  const expectedInitialTokenAmount = expectedTokenAmount.add(initialFundAmount);
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
@@ -63,6 +65,13 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
 
     it('should token be instance of AlisToken', async function () {
       this.token.should.be.an.instanceof(AlisToken);
+    });
+
+    it('should fund has 250 million tokens.', async function () {
+      // FIXME:
+      const expect = (250000000 * (10 ** 18));
+      const actual = await this.token.balanceOf(wallet);
+      await actual.toNumber().should.be.equal(expect);
     });
   });
 
@@ -118,7 +127,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should increase totalSupply', async function () {
       await this.crowdsale.send(value);
       const totalSupply = await this.token.totalSupply();
-      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+      totalSupply.should.be.bignumber.equal(expectedInitialTokenAmount);
     });
 
     it('should assign tokens to sender', async function () {
@@ -155,7 +164,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should increase totalSupply', async function () {
       await this.crowdsale.buyTokens(investor, { value, from: purchaser });
       const totalSupply = await this.token.totalSupply();
-      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+      totalSupply.should.be.bignumber.equal(expectedInitialTokenAmount);
     });
 
     it('should assign tokens to beneficiary', async function () {

@@ -15,6 +15,7 @@ contract AlisCrowdsale is CappedCrowdsale {
   Crowdsale(_startBlock, _endBlock, _rate, _wallet)
   CappedCrowdsale(_cap)
   {
+    token.mint(wallet, (250000000 * (10 ** 18)));
   }
 
   function createTokenContract() internal returns (MintableToken) {
