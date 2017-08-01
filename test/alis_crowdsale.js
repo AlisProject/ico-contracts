@@ -1,10 +1,13 @@
-import ether from './helpers/ether';
+import alis from '../utilities/alis';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 const AlisToken = artifacts.require('AlisToken.sol');
 const Crowdsale = artifacts.require('AlisCrowdsale.sol');
 
+const fs = require('fs');
+
+const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'utf8'));
 const BigNumber = web3.BigNumber;
 
 const should = require('chai')
@@ -13,18 +16,77 @@ const should = require('chai')
   .should();
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
-  const rate = new BigNumber(1000);
-  const value = ether(42);
+  const cap = alis(crowdsaleParams.cap);
+  const rate = new BigNumber(crowdsaleParams.rate);
+  const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
+
+  const value = alis(42);
 
   const expectedTokenAmount = rate.mul(value);
+  const expectedInitialTokenAmount = expectedTokenAmount.add(initialAlisFundBalance);
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet);
+    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet,
+      cap, initialAlisFundBalance);
 
     this.token = AlisToken.at(await this.crowdsale.token());
+  });
+
+  describe('initialized correctly', () => {
+    it('should be correct token name', async function () {
+      const expect = 'AlisToken';
+      const actual = await this.token.name();
+      actual.should.be.equal(expect);
+    });
+
+    it('should be correct token symbol', async function () {
+      const expect = 'ALIS';
+      const actual = await this.token.symbol();
+      actual.should.be.equal(expect);
+    });
+
+    it('should be correct token decimals', async function () {
+      const expect = 18;
+      const actual = await this.token.decimals();
+      actual.toNumber().should.be.equal(expect);
+    });
+
+    it('should be correct fund address', async function () {
+      // FIXME:
+      const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
+      const alisFundAddress = crowdsaleParams.alisFundAddress;
+      const cs = await Crowdsale.new(this.startBlock, this.endBlock, rate, alisFundAddress,
+        cap, initialAlisFundBalance);
+      const actual = await cs.wallet();
+      actual.should.be.equal(expect);
+    });
+
+    it('should token be instance of AlisToken', async function () {
+      this.token.should.be.an.instanceof(AlisToken);
+    });
+
+    it('should fund has 250 million tokens.', async function () {
+      const expect = alis(250000000);
+      const actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should total supply be 250 million tokens.', async function () {
+      const expect = alis(250000000);
+      const actual = await this.token.totalSupply();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should offering amount be 250 million tokens.', async function () {
+      const expect = alis(250000000);
+      const totalSupply = await this.token.totalSupply();
+      const crowdSaleCap = await this.crowdsale.cap();
+      const actual = crowdSaleCap.sub(totalSupply);
+      await actual.should.be.bignumber.equal(expect);
+    });
   });
 
   it('should be token owner', async function () {
@@ -79,7 +141,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should increase totalSupply', async function () {
       await this.crowdsale.send(value);
       const totalSupply = await this.token.totalSupply();
-      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+      totalSupply.should.be.bignumber.equal(expectedInitialTokenAmount);
     });
 
     it('should assign tokens to sender', async function () {
@@ -116,7 +178,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should increase totalSupply', async function () {
       await this.crowdsale.buyTokens(investor, { value, from: purchaser });
       const totalSupply = await this.token.totalSupply();
-      totalSupply.should.be.bignumber.equal(expectedTokenAmount);
+      totalSupply.should.be.bignumber.equal(expectedInitialTokenAmount);
     });
 
     it('should assign tokens to beneficiary', async function () {

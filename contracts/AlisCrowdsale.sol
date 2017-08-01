@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
 
-import 'zeppelin/contracts/crowdsale/Crowdsale.sol';
+import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
 import 'zeppelin/contracts/token/MintableToken.sol';
 import './AlisToken.sol';
 
@@ -9,21 +9,23 @@ import './AlisToken.sol';
 /**
  * THe Crowdsale contract of ALIS project.
 */
-contract AlisCrowdsale is Crowdsale {
+contract AlisCrowdsale is CappedCrowdsale {
 
-  function AlisCrowdsale(uint256 start, uint256 end, uint _rate, address _fundAddress)
-  Crowdsale(start, end, _rate, _fundAddress)
+  function AlisCrowdsale(
+  uint256 _startBlock,
+  uint256 _endBlock,
+  uint256 _rate,
+  address _wallet,
+  uint256 _cap,
+  uint256 _initialAlisFundBalance
+  )
+  Crowdsale(_startBlock, _endBlock, _rate, _wallet)
+  CappedCrowdsale(_cap)
   {
-    token = createTokenContract();
+    token.mint(wallet, _initialAlisFundBalance);
   }
 
   function createTokenContract() internal returns (MintableToken) {
     return new AlisToken();
-  }
-
-  // send ether to the fund collection wallet
-  // override to create custom fund forwarding mechanisms
-  function forwardFunds() internal {
-    wallet.transfer(msg.value);
   }
 }
