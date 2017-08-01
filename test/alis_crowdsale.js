@@ -5,6 +5,9 @@ import EVMThrow from './helpers/EVMThrow';
 const AlisToken = artifacts.require('AlisToken.sol');
 const Crowdsale = artifacts.require('AlisCrowdsale.sol');
 
+const fs = require('fs');
+
+const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'utf8'));
 const BigNumber = web3.BigNumber;
 
 const should = require('chai')
@@ -14,9 +17,10 @@ const should = require('chai')
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   // TODO: improve decimal calculation.
-  const cap = new BigNumber(500000000 * (10 ** 18));
+  const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
+  const rate = new BigNumber(crowdsaleParams.rate);
+  const fund = crowdsaleParams.fundAddress;
 
-  const rate = new BigNumber(1000);
   const value = ether(42);
 
   const expectedTokenAmount = rate.mul(value);
@@ -28,6 +32,38 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet, cap);
 
     this.token = AlisToken.at(await this.crowdsale.token());
+  });
+
+  describe('initialized correctly', () => {
+    it('should be correct token name', async function () {
+      const expect = 'AlisToken';
+      const actual = await this.token.name();
+      actual.should.be.equal(expect);
+    });
+
+    it('should be correct token symbol', async function () {
+      const expect = 'ALIS';
+      const actual = await this.token.symbol();
+      actual.should.be.equal(expect);
+    });
+
+    it('should be correct token decimals', async function () {
+      const expect = 18;
+      const actual = await this.token.decimals();
+      actual.toNumber().should.be.equal(expect);
+    });
+
+    it('should be correct fund address', async function () {
+      // FIXME:
+      const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
+      const cs = await Crowdsale.new(this.startBlock, this.endBlock, rate, fund, cap);
+      const actual = await cs.wallet();
+      actual.should.be.equal(expect);
+    });
+
+    it('should token be instance of AlisToken', async function () {
+      this.token.should.be.an.instanceof(AlisToken);
+    });
   });
 
   it('should be token owner', async function () {
