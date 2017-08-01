@@ -13,6 +13,9 @@ const should = require('chai')
   .should();
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
+  // TODO: improve decimal calculation.
+  const cap = new BigNumber(500000000 * (10 ** 18));
+
   const rate = new BigNumber(1000);
   const value = ether(42);
 
@@ -22,7 +25,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet);
+    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet, cap);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
