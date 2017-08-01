@@ -17,21 +17,22 @@ const should = require('chai')
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   // TODO: improve decimal calculation.
   const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
-  const initialFundAmount = new BigNumber(250000000 * (10 ** 18));
   const rate = new BigNumber(crowdsaleParams.rate);
-  const fund = crowdsaleParams.fundAddress;
+  const initialAlisFundBalance = new BigNumber(
+    crowdsaleParams.initialAlisFundBalance).mul(10 ** 18);
 
   // FIXME:
   const value = new BigNumber(42 * (10 ** 18));
 
   const expectedTokenAmount = rate.mul(value);
-  const expectedInitialTokenAmount = expectedTokenAmount.add(initialFundAmount);
+  const expectedInitialTokenAmount = expectedTokenAmount.add(initialAlisFundBalance);
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet, cap);
+    this.crowdsale = await Crowdsale.new(this.startBlock, this.endBlock, rate, wallet,
+      cap, initialAlisFundBalance);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -58,7 +59,9 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should be correct fund address', async function () {
       // FIXME:
       const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
-      const cs = await Crowdsale.new(this.startBlock, this.endBlock, rate, fund, cap);
+      const alisFundAddress = crowdsaleParams.alisFundAddress;
+      const cs = await Crowdsale.new(this.startBlock, this.endBlock, rate, alisFundAddress,
+        cap, initialAlisFundBalance);
       const actual = await cs.wallet();
       actual.should.be.equal(expect);
     });
@@ -69,9 +72,9 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
 
     it('should fund has 250 million tokens.', async function () {
       // FIXME:
-      const expect = (250000000 * (10 ** 18));
+      const expect = new BigNumber((250000000 * (10 ** 18)));
       const actual = await this.token.balanceOf(wallet);
-      await actual.toNumber().should.be.equal(expect);
+      await actual.should.be.bignumber.equal(expect);
     });
   });
 

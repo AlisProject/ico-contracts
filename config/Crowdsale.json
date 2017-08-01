@@ -1,6 +1,6 @@
 {
-  "fundAddress": "0x38924972b953fb27701494f9d80ca3a090f0dc1c",
+  "alisFundAddress": "0x38924972b953fb27701494f9d80ca3a090f0dc1c",
   "cap": 500000000,
-  "offeredAmount": 250000000,
+  "initialAlisFundBalance": 250000000,
   "rate": 2080
 }

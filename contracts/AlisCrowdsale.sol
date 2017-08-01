@@ -11,11 +11,18 @@ import './AlisToken.sol';
 */
 contract AlisCrowdsale is CappedCrowdsale {
 
-  function AlisCrowdsale(uint256 _startBlock, uint256 _endBlock, uint256 _rate, address _wallet, uint256 _cap)
+  function AlisCrowdsale(
+  uint256 _startBlock,
+  uint256 _endBlock,
+  uint256 _rate,
+  address _wallet,
+  uint256 _cap,
+  uint256 _initialAlisFundBalance
+  )
   Crowdsale(_startBlock, _endBlock, _rate, _wallet)
   CappedCrowdsale(_cap)
   {
-    token.mint(wallet, (250000000 * (10 ** 18)));
+    token.mint(wallet, _initialAlisFundBalance);
   }
 
   function createTokenContract() internal returns (MintableToken) {

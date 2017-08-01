@@ -18,12 +18,15 @@ contract('AlisCrowdsale', ([wallet]) => {
   // TODO: improve decimal calculation.
   const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
   const rate = crowdsaleParams.rate;
+  const initialAlisFundBalance = new BigNumber(
+    crowdsaleParams.initialAlisFundBalance * (10 ** 18));
 
   const lessThanCap = cap.div(5);
 
   describe('creating a valid crowdsale', () => {
     it('should fail with zero cap', async function () {
-      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0).should.be.rejectedWith(EVMThrow);
+      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0, initialAlisFundBalance)
+        .should.be.rejectedWith(EVMThrow);
     });
 
     it('should total supply of ALIS token be 500 million', async function () {
@@ -37,7 +40,8 @@ contract('AlisCrowdsale', ([wallet]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, cap);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
+      cap, initialAlisFundBalance);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
