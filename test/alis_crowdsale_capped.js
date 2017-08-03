@@ -53,6 +53,10 @@ contract('AlisCrowdsale', ([wallet]) => {
 
     it('should accept payments within cap', async function () {
       await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+    });
+
+    it('should accept payments just cap', async function () {
+      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
       await this.crowdsale.send(lessThanCap).should.be.fulfilled;
     });
 
