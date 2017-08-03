@@ -13,8 +13,6 @@ module.exports = function deployContracts(deployer) {
   const actualCap = alis(crowdsaleParams.cap);
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 
-  deployer.deploy(AlisToken);
-  deployer.link(AlisToken, AlisCrowdsale);
   // TODO: start & end block.
   deployer.deploy(AlisCrowdsale, 900000, 1000000, crowdsaleParams.rate,
     crowdsaleParams.alisFundAddress, actualCap, actualInitialAlisFundBalance);
