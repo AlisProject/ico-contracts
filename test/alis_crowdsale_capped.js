@@ -18,20 +18,20 @@ contract('AlisCrowdsale', ([wallet]) => {
     this.token = AlisToken.at(await this.crowdsale.token());
   });
 
-  describe('creating a valid crowdsale', () => {
+  describe('creating a valid capped crowdsale', () => {
     it('should fail with zero cap', async function () {
       await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0,
         initialAlisFundBalance).should.be.rejectedWith(EVMThrow);
     });
 
-    it('should total supply of ALIS token be 500 million', async function () {
+    it('should cap of ALIS token be 500 million', async function () {
       const expect = alis(500000000);
       const tokenCap = await this.crowdsale.cap();
       await tokenCap.toNumber().should.be.bignumber.equal(expect);
     });
   });
 
-  describe('accepting payments', () => {
+  describe('accepting payments with cap', () => {
     beforeEach(async function () {
       await advanceToBlock(this.startBlock - 1);
     });
@@ -55,7 +55,7 @@ contract('AlisCrowdsale', ([wallet]) => {
     });
   });
 
-  describe('ending', () => {
+  describe('ending with cap', () => {
     beforeEach(async function () {
       await advanceToBlock(this.startBlock - 1);
     });
@@ -68,7 +68,7 @@ contract('AlisCrowdsale', ([wallet]) => {
       hasEnded.should.equal(false);
     });
 
-    it('should not be ended if just under cap', async function () {
+    it('should not be ended even if immediately before cap', async function () {
       await this.crowdsale.send(cap.minus(1));
       const hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);

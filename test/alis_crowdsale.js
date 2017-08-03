@@ -60,7 +60,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       this.token.should.be.an.instanceof(AlisToken);
     });
 
-    it('should fund has 250 million tokens.', async function () {
+    it('should ALIS fund has 250 million tokens.', async function () {
       const expect = alis(250000000);
       const actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
@@ -72,6 +72,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
+    // offering amount = cap - total supply.
     it('should offering amount be 250 million tokens.', async function () {
       const expect = alis(250000000);
       const totalSupply = await this.token.totalSupply();
@@ -85,16 +86,6 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should be token owner', async function () {
       const owner = await this.token.owner();
       owner.should.equal(this.crowdsale.address);
-    });
-  });
-
-  describe('ending', () => {
-    it('should be ended only after end', async function () {
-      let ended = await this.crowdsale.hasEnded();
-      ended.should.equal(false);
-      await advanceToBlock(this.endBlock + 1);
-      ended = await this.crowdsale.hasEnded();
-      ended.should.equal(true);
     });
   });
 
@@ -120,7 +111,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   });
 
   describe('token amount adjustments', () => {
-    it('should fund has 250 million tokens after received ether', async function () {
+    it('should fund has 250 million tokens even if received ether', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(someOfTokenAmount);
       const expect = alis(250000000);
@@ -129,8 +120,8 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     });
 
     // initial + ( received ether * decimals ) = total supply
-    // 250000000 + ( 10000 * 2080) = 270800000
-    it('should total supply be 2.708 million tokens after received 10,000 ether', async function () {
+    // 250,000,000 + ( 10,000 * 2,080 ) = 270,800,000
+    it('should total supply be 270.8 million tokens after received 10,000 ether', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(ether(10000));
       const expect = alis(270800000);
@@ -210,6 +201,16 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: purchaser });
       const post = web3.eth.getBalance(wallet);
       post.minus(pre).should.be.bignumber.equal(someOfTokenAmount);
+    });
+  });
+
+  describe('ending', () => {
+    it('should be ended only after end', async function () {
+      let ended = await this.crowdsale.hasEnded();
+      ended.should.equal(false);
+      await advanceToBlock(this.endBlock + 1);
+      ended = await this.crowdsale.hasEnded();
+      ended.should.equal(true);
     });
   });
 });
