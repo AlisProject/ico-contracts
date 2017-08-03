@@ -3,7 +3,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance } from './helpers/alis_crowdsale_helper';
+  initialAlisFundBalance } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([wallet]) => {
   const lessThanCap = cap.div(5);

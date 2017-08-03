@@ -1,4 +1,4 @@
-import { AlisToken } from './helpers/alis_crowdsale_helper';
+import { AlisToken } from './helpers/alis_helper';
 
 contract('AlisToken', (accounts) => {
   let token;

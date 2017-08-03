@@ -4,7 +4,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, alisFundAddress, cap, rate, initialAlisFundBalance,
-  should } from './helpers/alis_crowdsale_helper';
+  should } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   const someOfTokenAmount = ether(42);
