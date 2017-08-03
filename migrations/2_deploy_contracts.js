@@ -1,6 +1,5 @@
 const fs = require('fs');
 
-const AlisToken = artifacts.require('AlisToken.sol');
 const AlisCrowdsale = artifacts.require('AlisCrowdsale.sol');
 const crowdsaleParams = JSON.parse(fs.readFileSync('../config/Crowdsale.json', 'utf8'));
 
@@ -13,7 +12,6 @@ module.exports = function deployContracts(deployer) {
   const actualCap = alis(crowdsaleParams.cap);
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 
-  // TODO: start & end block.
-  deployer.deploy(AlisCrowdsale, 900000, 1000000, crowdsaleParams.rate,
+  deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock, crowdsaleParams.rate,
     crowdsaleParams.alisFundAddress, actualCap, actualInitialAlisFundBalance);
 };
