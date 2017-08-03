@@ -3,7 +3,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance } from './helpers/alis_helper';
+  initialAlisFundBalance, goal } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([wallet]) => {
   const lessThanCap = cap.div(5);
@@ -13,7 +13,7 @@ contract('AlisCrowdsale', ([wallet]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance);
+      cap, initialAlisFundBalance, goal);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -21,7 +21,7 @@ contract('AlisCrowdsale', ([wallet]) => {
   describe('creating a valid capped crowdsale', () => {
     it('should fail with zero cap', async function () {
       await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0,
-        initialAlisFundBalance).should.be.rejectedWith(EVMThrow);
+        initialAlisFundBalance, goal).should.be.rejectedWith(EVMThrow);
     });
 
     it('should cap of ALIS token be 500 million', async function () {

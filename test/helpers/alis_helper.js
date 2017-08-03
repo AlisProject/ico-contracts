@@ -21,3 +21,4 @@ export const cap = alis(crowdsaleParams.cap);
 export const rate = new BigNumber(crowdsaleParams.rate);
 export const alisFundAddress = crowdsaleParams.alisFundAddress;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
+export const goal = alis(crowdsaleParams.goal);

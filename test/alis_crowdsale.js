@@ -4,7 +4,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, alisFundAddress, cap, rate, initialAlisFundBalance,
-  should } from './helpers/alis_helper';
+  should, goal } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   const someOfTokenAmount = ether(42);
@@ -16,7 +16,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance);
+      cap, initialAlisFundBalance, goal);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -26,7 +26,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       // FIXME:
       const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
       const cs = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, alisFundAddress,
-        cap, initialAlisFundBalance);
+        cap, initialAlisFundBalance, goal);
       const actual = await cs.wallet();
       actual.should.be.equal(expect);
     });
@@ -134,11 +134,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       balance.should.be.bignumber.equal(expectedTokenAmount);
     });
 
-    it('should forward funds to wallet', async function () {
+    it('should not forward funds to wallet', async function () {
       const pre = web3.eth.getBalance(wallet);
       await this.crowdsale.sendTransaction({ value: someOfTokenAmount, from: investor });
       const post = web3.eth.getBalance(wallet);
-      post.minus(pre).should.be.bignumber.equal(someOfTokenAmount);
+      post.should.be.bignumber.equal(pre);
     });
   });
 
@@ -171,11 +171,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       balance.should.be.bignumber.equal(expectedTokenAmount);
     });
 
-    it('should forward funds to wallet', async function () {
+    it('should not forward funds to wallet', async function () {
       const pre = web3.eth.getBalance(wallet);
       await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: purchaser });
       const post = web3.eth.getBalance(wallet);
-      post.minus(pre).should.be.bignumber.equal(someOfTokenAmount);
+      post.should.be.bignumber.equal(pre);
     });
   });
 
