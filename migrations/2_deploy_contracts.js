@@ -5,7 +5,7 @@ const crowdsaleParams = JSON.parse(fs.readFileSync('../config/Crowdsale.json', '
 
 // FIXME: merge to utility.
 function alis(n) {
-  return new web3.BigNumber(n).mul(10 ** 18);
+  return new web3.BigNumber(web3.toWei(n, 'ether'));
 }
 
 module.exports = function deployContracts(deployer) {

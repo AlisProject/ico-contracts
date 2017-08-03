@@ -54,6 +54,13 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       actual.toNumber().should.be.equal(expect);
     });
 
+    it('should be same decimals of ether', async function () {
+      const expect = web3.toWei(1, 'ether');
+      const tokenDecimals = await this.token.decimals();
+      const actual = new web3.BigNumber(1 * (10 ** tokenDecimals));
+      actual.toNumber().should.be.bignumber.equal(expect);
+    });
+
     it('should be correct fund address', async function () {
       // FIXME:
       const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';

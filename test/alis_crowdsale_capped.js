@@ -1,3 +1,4 @@
+import alis from '../utilities/alis';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
@@ -15,11 +16,9 @@ const AlisCrowdsale = artifacts.require('AlisCrowdsale');
 const AlisToken = artifacts.require('AlisToken');
 
 contract('AlisCrowdsale', ([wallet]) => {
-  // TODO: improve decimal calculation.
-  const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
+  const cap = alis(crowdsaleParams.cap);
   const rate = crowdsaleParams.rate;
-  const initialAlisFundBalance = new BigNumber(
-    crowdsaleParams.initialAlisFundBalance * (10 ** 18));
+  const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 
   const lessThanCap = cap.div(5);
 
@@ -40,9 +39,9 @@ contract('AlisCrowdsale', ([wallet]) => {
     });
 
     it('should total supply of ALIS token be 500 million', async function () {
-      const expect = (500000000 * (10 ** 18));
+      const expect = alis(500000000);
       const tokenCap = await this.crowdsale.cap();
-      await tokenCap.toNumber().should.be.equal(expect);
+      await tokenCap.toNumber().should.be.bignumber.equal(expect);
     });
   });
 
