@@ -12,6 +12,7 @@ module.exports = function deployContracts(deployer) {
   const actualCap = alis(crowdsaleParams.cap);
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 
-  deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock, crowdsaleParams.rate,
-    crowdsaleParams.alisFundAddress, actualCap, actualInitialAlisFundBalance);
+  deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
+    crowdsaleParams.rate, crowdsaleParams.alisFundAddress, actualCap,
+    actualInitialAlisFundBalance, crowdsaleParams.goal);
 };
