@@ -1,5 +1,7 @@
 {
   "alisFundAddress": "0x38924972b953fb27701494f9d80ca3a090f0dc1c",
+  "startBlock": 900000,
+  "endBlock": 1000000,
   "cap": 500000000,
   "initialAlisFundBalance": 250000000,
   "rate": 2080
