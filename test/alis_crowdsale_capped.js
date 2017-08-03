@@ -2,24 +2,10 @@ import alis from '../utilities/alis';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-const fs = require('fs');
-
-const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'utf8'));
-const BigNumber = web3.BigNumber;
-
-require('chai')
-  .use(require('chai-as-promised'))
-  .use(require('chai-bignumber')(BigNumber))
-  .should();
-
-const AlisCrowdsale = artifacts.require('AlisCrowdsale');
-const AlisToken = artifacts.require('AlisToken');
+import { AlisToken, AlisCrowdsale, cap, rate,
+  initialAlisFundBalance } from './helpers/alis_crowdsale_helper';
 
 contract('AlisCrowdsale', ([wallet]) => {
-  const cap = alis(crowdsaleParams.cap);
-  const rate = crowdsaleParams.rate;
-  const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
-
   const lessThanCap = cap.div(5);
 
   beforeEach(async function () {
@@ -34,8 +20,8 @@ contract('AlisCrowdsale', ([wallet]) => {
 
   describe('creating a valid crowdsale', () => {
     it('should fail with zero cap', async function () {
-      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0, initialAlisFundBalance)
-        .should.be.rejectedWith(EVMThrow);
+      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0,
+        initialAlisFundBalance).should.be.rejectedWith(EVMThrow);
     });
 
     it('should total supply of ALIS token be 500 million', async function () {
