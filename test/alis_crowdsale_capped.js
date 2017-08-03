@@ -23,6 +23,16 @@ contract('AlisCrowdsale', ([wallet]) => {
 
   const lessThanCap = cap.div(5);
 
+  beforeEach(async function () {
+    this.startBlock = web3.eth.blockNumber + 10;
+    this.endBlock = web3.eth.blockNumber + 20;
+
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
+      cap, initialAlisFundBalance);
+
+    this.token = AlisToken.at(await this.crowdsale.token());
+  });
+
   describe('creating a valid crowdsale', () => {
     it('should fail with zero cap', async function () {
       await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0, initialAlisFundBalance)
@@ -34,16 +44,6 @@ contract('AlisCrowdsale', ([wallet]) => {
       const tokenCap = await this.crowdsale.cap();
       await tokenCap.toNumber().should.be.equal(expect);
     });
-  });
-
-  beforeEach(async function () {
-    this.startBlock = web3.eth.blockNumber + 10;
-    this.endBlock = web3.eth.blockNumber + 20;
-
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance);
-
-    this.token = AlisToken.at(await this.crowdsale.token());
   });
 
   describe('accepting payments', () => {
