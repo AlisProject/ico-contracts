@@ -7,7 +7,7 @@ import './AlisToken.sol';
 
 
 /**
- * THe Crowdsale contract of ALIS project.
+ * The Crowdsale contract of ALIS project.
 */
 contract AlisCrowdsale is CappedCrowdsale {
 
@@ -25,6 +25,7 @@ contract AlisCrowdsale is CappedCrowdsale {
     token.mint(wallet, _initialAlisFundBalance);
   }
 
+  // overriding Crowdsale#createTokenContract to change token to AlisToken.
   function createTokenContract() internal returns (MintableToken) {
     return new AlisToken();
   }

@@ -1,3 +1,5 @@
 export default function alis(n) {
-  return new web3.BigNumber(n).mul(10 ** 18);
+  // ALIS token has same decimals of ether.
+  // So we can use same digit such as `wei`.
+  return new web3.BigNumber(web3.toWei(n, 'ether'));
 }

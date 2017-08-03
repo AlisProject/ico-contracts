@@ -1,40 +1,12 @@
+import alis from '../utilities/alis';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-const fs = require('fs');
-
-const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'utf8'));
-const BigNumber = web3.BigNumber;
-
-require('chai')
-  .use(require('chai-as-promised'))
-  .use(require('chai-bignumber')(BigNumber))
-  .should();
-
-const AlisCrowdsale = artifacts.require('AlisCrowdsale');
-const AlisToken = artifacts.require('AlisToken');
+import { AlisToken, AlisCrowdsale, cap, rate,
+  initialAlisFundBalance } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([wallet]) => {
-  // TODO: improve decimal calculation.
-  const cap = new BigNumber(crowdsaleParams.cap * (10 ** 18));
-  const rate = crowdsaleParams.rate;
-  const initialAlisFundBalance = new BigNumber(
-    crowdsaleParams.initialAlisFundBalance * (10 ** 18));
-
   const lessThanCap = cap.div(5);
-
-  describe('creating a valid crowdsale', () => {
-    it('should fail with zero cap', async function () {
-      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0, initialAlisFundBalance)
-        .should.be.rejectedWith(EVMThrow);
-    });
-
-    it('should total supply of ALIS token be 500 million', async function () {
-      const expect = (500000000 * (10 ** 18));
-      const tokenCap = await this.crowdsale.cap();
-      await tokenCap.toNumber().should.be.equal(expect);
-    });
-  });
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
@@ -46,12 +18,29 @@ contract('AlisCrowdsale', ([wallet]) => {
     this.token = AlisToken.at(await this.crowdsale.token());
   });
 
-  describe('accepting payments', () => {
+  describe('creating a valid capped crowdsale', () => {
+    it('should fail with zero cap', async function () {
+      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0,
+        initialAlisFundBalance).should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should cap of ALIS token be 500 million', async function () {
+      const expect = alis(500000000);
+      const tokenCap = await this.crowdsale.cap();
+      await tokenCap.toNumber().should.be.bignumber.equal(expect);
+    });
+  });
+
+  describe('accepting payments with cap', () => {
     beforeEach(async function () {
       await advanceToBlock(this.startBlock - 1);
     });
 
     it('should accept payments within cap', async function () {
+      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+    });
+
+    it('should accept payments just cap', async function () {
       await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
       await this.crowdsale.send(lessThanCap).should.be.fulfilled;
     });
@@ -66,7 +55,7 @@ contract('AlisCrowdsale', ([wallet]) => {
     });
   });
 
-  describe('ending', () => {
+  describe('ending with cap', () => {
     beforeEach(async function () {
       await advanceToBlock(this.startBlock - 1);
     });
@@ -79,7 +68,7 @@ contract('AlisCrowdsale', ([wallet]) => {
       hasEnded.should.equal(false);
     });
 
-    it('should not be ended if just under cap', async function () {
+    it('should not be ended even if immediately before cap', async function () {
       await this.crowdsale.send(cap.minus(1));
       const hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
