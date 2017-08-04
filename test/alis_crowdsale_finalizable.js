@@ -1,3 +1,5 @@
+import alis from '../utilities/alis';
+import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
@@ -33,6 +35,31 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await this.crowdsale.finalize({ from: owner });
       const finished = await this.token.mintingFinished();
       finished.should.equal(true);
+    });
+  });
+
+  describe('remaining tokens', () => {
+    it('should store to ALIS fund if tokens are remain', async function () {
+      await advanceToBlock(this.startBlock - 1);
+
+      // ether * rate = sold amount
+      // 100,000 * 2,080 = 208,000,000
+      await this.crowdsale.send(ether(100000));
+
+      // offered amount - sold amount = remain
+      // 250,000,000 - 208,000,000 = 42,000,000
+      const remainingTokens = alis(42000000);
+
+      let expect = alis(250000000);
+      let actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      expect = expect.plus(remainingTokens);
+      actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
     });
   });
 
