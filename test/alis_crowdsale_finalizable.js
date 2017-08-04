@@ -77,6 +77,23 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
     });
+
+    it('should not do anything if no remaining token', async function () {
+      // No remaining token already.
+      this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
+        initialAlisFundBalance, initialAlisFundBalance, goal, { from: owner });
+
+      const expect = alis(250000000);
+      let actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      // Same balance of before finalize.
+      actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+    });
   });
 
   describe('reject finalize', () => {
