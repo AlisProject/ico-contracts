@@ -33,7 +33,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
     return new AlisToken();
   }
 
-  // overriding Crowdsale#finalization to store remaining tokens.
+  // overriding RefundableCrowdsale#finalization to store remaining tokens.
   function finalization() internal {
     uint256 remaining = cap.sub(token.totalSupply());
 

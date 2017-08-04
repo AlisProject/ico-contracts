@@ -82,6 +82,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       // No remaining token already.
       this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
         initialAlisFundBalance, initialAlisFundBalance, goal, { from: owner });
+      this.token = AlisToken.at(await this.crowdsale.token());
 
       const expect = alis(250000000);
       let actual = await this.token.balanceOf(wallet);
