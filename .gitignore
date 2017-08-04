@@ -4,4 +4,4 @@
 .idea
 
 # tmp file.
-.node-xmlhttprequest-sync*
+.node-xmlhttprequest*
