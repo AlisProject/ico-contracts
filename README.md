@@ -5,6 +5,12 @@ Contracts of ALIS.
 
 # Usage
 
-1. git clone
+1. `git clone https://github.com/AlisProject/contracts.git`
 1. `yarn`
 1. `yarn truffle install`
+
+# test
+- `yarn test`
+
+# debug
+- `yarn debug`
