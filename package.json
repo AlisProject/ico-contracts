@@ -22,7 +22,7 @@
     "ethereumjs-testrpc": "^4.0.1",
     "fs": "^0.0.1-security",
     "solium": "^0.5.4",
-    "truffle": "^3.4.5"
+    "truffle": "^3.4.7"
   },
   "scripts": {
     "test": "scripts/test.sh",
