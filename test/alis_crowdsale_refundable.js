@@ -58,6 +58,14 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
       await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
     });
 
+    it('should deny refunds after end if goal was exceeded', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      const exceeded = ether(goal + 100);
+      await this.crowdsale.sendTransaction({ value: exceeded, from: investor });
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+    });
+
     it('should deny refunds if cap was reached', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(cap);
