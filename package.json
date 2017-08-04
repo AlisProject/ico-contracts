@@ -26,6 +26,7 @@
   },
   "scripts": {
     "test": "scripts/test.sh",
+    "debug": "scripts/debug.sh",
     "lint:sol": "yarn run solium -- --dir ./contracts",
     "lint": "yarn run eslint . -- --fix && yarn lint:sol",
     "compile": "rm -rf ./build/* && truffle compile",
