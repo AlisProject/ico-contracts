@@ -61,6 +61,22 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
     });
+
+    it('should not care about goal, to keep code simple', async function () {
+      let expect = alis(250000000);
+      let actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+
+      const goalReached = await this.crowdsale.goalReached();
+      await goalReached.should.equal(false);
+
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      expect = alis(500000000);
+      actual = await this.token.balanceOf(wallet);
+      await actual.should.be.bignumber.equal(expect);
+    });
   });
 
   describe('reject finalize', () => {
