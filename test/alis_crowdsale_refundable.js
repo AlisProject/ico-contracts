@@ -88,6 +88,21 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
       post.minus(pre).should.be.bignumber.equal(lessThanGoal);
     });
 
+    it('should allow refunds after end if goal was only 1 ether missing', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      const onlyOneEtherMissing = ether(goal - 1);
+      await this.crowdsale.sendTransaction({ value: onlyOneEtherMissing, from: investor });
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      const pre = web3.eth.getBalance(investor);
+      await this.crowdsale.claimRefund({ from: investor, gasPrice: 0 })
+        .should.be.fulfilled;
+      const post = web3.eth.getBalance(investor);
+
+      post.minus(pre).should.be.bignumber.equal(onlyOneEtherMissing);
+    });
+
     it('should return 0 ether to non investors', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.sendTransaction({ value: lessThanGoal, from: investor });
