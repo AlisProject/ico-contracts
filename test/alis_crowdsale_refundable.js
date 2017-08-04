@@ -4,7 +4,7 @@ import EVMThrow from './helpers/EVMThrow';
 
 import { AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber } from './helpers/alis_helper';
 
-contract('AlisCrowdsale', ([owner, wallet, investor]) => {
+contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
   const lessThanGoal = ether(goal).minus(ether(100));
 
   beforeEach(async function () {
@@ -67,12 +67,25 @@ contract('AlisCrowdsale', ([owner, wallet, investor]) => {
       await this.crowdsale.finalize({ from: owner });
 
       const pre = web3.eth.getBalance(investor);
-      // TODO: gasPrice
       await this.crowdsale.claimRefund({ from: investor, gasPrice: 0 })
         .should.be.fulfilled;
       const post = web3.eth.getBalance(investor);
 
       post.minus(pre).should.be.bignumber.equal(lessThanGoal);
+    });
+
+    it('should return 0 ether to non investors', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.sendTransaction({ value: lessThanGoal, from: investor });
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      const pre = web3.eth.getBalance(notInvestor);
+      await this.crowdsale.claimRefund({ from: notInvestor, gasPrice: 0 })
+        .should.be.fulfilled;
+      const post = web3.eth.getBalance(notInvestor);
+
+      post.should.be.bignumber.equal(pre);
     });
   });
 
