@@ -32,4 +32,15 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   function createTokenContract() internal returns (MintableToken) {
     return new AlisToken();
   }
+
+  // overriding Crowdsale#finalization to store remaining tokens.
+  function finalization() internal {
+    uint256 remaining = cap.sub(token.totalSupply());
+
+    if (remaining > 0) {
+      token.mint(wallet, remaining);
+    }
+
+    super.finalization();
+  }
 }
