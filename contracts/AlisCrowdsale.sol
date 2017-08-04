@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
 
 
 import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
@@ -31,5 +31,16 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   // overriding Crowdsale#createTokenContract to change token to AlisToken.
   function createTokenContract() internal returns (MintableToken) {
     return new AlisToken();
+  }
+
+  // overriding RefundableCrowdsale#finalization to store remaining tokens.
+  function finalization() internal {
+    uint256 remaining = cap.sub(token.totalSupply());
+
+    if (remaining > 0) {
+      token.mint(wallet, remaining);
+    }
+
+    super.finalization();
   }
 }
