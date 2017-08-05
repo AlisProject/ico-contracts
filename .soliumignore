@@ -1,2 +1,3 @@
 node_modules
 installed_contracts
+contracts/lib
