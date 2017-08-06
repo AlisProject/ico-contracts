@@ -4,6 +4,6 @@
   "endBlock": 1000000,
   "cap": 500000000,
   "initialAlisFundBalance": 250000000,
-  "rate": 2080,
+  "rate": 2000,
   "goal": 14000
 }

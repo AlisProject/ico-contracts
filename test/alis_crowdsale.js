@@ -95,11 +95,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     });
 
     // initial + ( received ether * decimals ) = total supply
-    // 250,000,000 + ( 10,000 * 2,080 ) = 270,800,000
+    // 250,000,000 + ( 10,000 * 2,000 ) = 270,000,000
     it('should total supply be 270.8 million tokens after received 10,000 ether', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(ether(10000));
-      const expect = alis(270800000);
+      const expect = alis(270000000);
       const actual = await this.token.totalSupply();
       await actual.should.be.bignumber.equal(expect);
     });

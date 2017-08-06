@@ -43,12 +43,12 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await advanceToBlock(this.startBlock - 1);
 
       // ether * rate = sold amount
-      // 100,000 * 2,080 = 208,000,000
+      // 100,000 * 2,000 = 200,000,000
       await this.crowdsale.send(ether(100000));
 
       // offered amount - sold amount = remain
-      // 250,000,000 - 208,000,000 = 42,000,000
-      const remainingTokens = alis(42000000);
+      // 250,000,000 - 200,000,000 = 50,000,000
+      const remainingTokens = alis(50000000);
 
       let expect = alis(250000000);
       let actual = await this.token.balanceOf(wallet);
