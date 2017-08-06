@@ -69,7 +69,16 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   //
   // This is created to compatible PR below:
   // - https://github.com/OpenZeppelin/zeppelin-solidity/pull/317
-  function getRate() returns (uint256) {
-    return rate;
+  function getRate() constant returns (uint256) {
+    uint256 currentRate = rate;
+
+    // TODO: refactoring
+
+    // 2017/09/01 02:00 UTC
+    if (now <= 1504231200) {
+      currentRate = 20000;
+    }
+
+    return currentRate;
   }
 }
