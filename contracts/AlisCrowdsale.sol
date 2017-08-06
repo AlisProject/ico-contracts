@@ -43,4 +43,33 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
 
     super.finalization();
   }
+
+  // overriding Crowdsale#buyTokens to rate customizable.
+  // This is created to compatible PR below:
+  // - https://github.com/OpenZeppelin/zeppelin-solidity/pull/317
+  function buyTokens(address beneficiary) payable {
+    require(beneficiary != 0x0);
+    require(validPurchase());
+
+    uint256 weiAmount = msg.value;
+
+    // calculate token amount to be created
+    uint256 tokens = weiAmount.mul(getRate());
+
+    // update state
+    weiRaised = weiRaised.add(weiAmount);
+
+    token.mint(beneficiary, tokens);
+    TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
+
+    forwardFunds();
+  }
+
+  // Custom rate.
+  //
+  // This is created to compatible PR below:
+  // - https://github.com/OpenZeppelin/zeppelin-solidity/pull/317
+  function getRate() returns (uint256) {
+    return rate;
+  }
 }
