@@ -21,6 +21,7 @@
     "eslint-plugin-import": "^2.7.0",
     "ethereumjs-testrpc": "^4.0.1",
     "fs": "^0.0.1-security",
+    "mocha-junit-reporter": "^1.13.0",
     "solium": "^0.5.4",
     "truffle": "^3.4.7"
   },
