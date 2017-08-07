@@ -18,4 +18,10 @@ jobs:
           name: test
           command: yarn run eslint .
           command: yarn run solium -- --dir ./contracts
+
+          # for truffle test
+          command: sed -i '5i mocha:{reporter:"mocha-junit-reporter"},' truffle.js
+
           command: yarn test
+      - store_artifacts:
+        - path: ./test-results.xml
