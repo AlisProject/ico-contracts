@@ -25,10 +25,16 @@ export const alisFundAddress = crowdsaleParams.alisFundAddress;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 export const goal = new BigNumber(crowdsaleParams.goal);
 
+// Set time to token sale start time.
+export async function setTimingToTokenSaleStart() {
+  const now = await Math.floor(Date.now() / 1000);
+  // TODO: refactoring
+  const increaseDuration = 1504231200 - now;
+  await increaseTime(moment.duration(increaseDuration, 'second'));
+}
+
 // Set time to after week4 when token rate is base.
 export async function setTimingToBaseTokenRate() {
-  // TODO: refactoring
-  const now = await Math.floor(Date.now() / 1000);
-  const increaseDuration = 1504231200 - now;
-  await increaseTime(moment.duration(increaseDuration + 100, 'second'));
+  await setTimingToTokenSaleStart();
+  await increaseTime(moment.duration(3, 'weeks'));
 }
