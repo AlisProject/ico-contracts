@@ -4,6 +4,12 @@
   "endBlock": 1000000,
   "cap": 500000000,
   "initialAlisFundBalance": 250000000,
-  "rate": 2000,
-  "goal": 14000
+  "goal": 14000,
+  "rate": {
+    "preSale": 20000,
+    "week1": 2900,
+    "week2": 2600,
+    "week3": 2300,
+    "base": 2000
+  }
 }

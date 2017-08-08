@@ -17,3 +17,4 @@ Let me know at Slack channel if you have any questions.
 
 # debug
 - `yarn debug`
+    - You can use `debugger;` function of node.

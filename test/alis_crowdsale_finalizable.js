@@ -4,15 +4,21 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance, goal, should } from './helpers/alis_helper';
+  initialAlisFundBalance, goal, should, setTimingToBaseTokenRate,
+} from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
+  before(async () => {
+    await setTimingToBaseTokenRate();
+  });
+
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance, goal, { from: owner });
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+      rate.base, wallet, cap, initialAlisFundBalance, goal,
+      rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -80,8 +86,11 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
 
     it('should not do anything if no remaining token', async function () {
       // No remaining token already.
-      this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-        initialAlisFundBalance, initialAlisFundBalance, goal, { from: owner });
+      const capSameAsInitialAlisFundBalance = initialAlisFundBalance;
+      this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+        rate.base, wallet, capSameAsInitialAlisFundBalance, initialAlisFundBalance,
+        goal, rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+
       this.token = AlisToken.at(await this.crowdsale.token());
 
       const expect = alis(250000000);

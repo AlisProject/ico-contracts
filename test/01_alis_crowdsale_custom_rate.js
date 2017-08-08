@@ -13,8 +13,9 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance, ether(goal), { from: owner });
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
+      rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
   });
 
   describe('creating a valid rate customizable crowdsale', () => {

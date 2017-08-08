@@ -1,4 +1,5 @@
 import alis from '../utilities/alis';
+import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
@@ -12,16 +13,19 @@ contract('AlisCrowdsale', ([wallet]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance, goal);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
+      rate.preSale, rate.week1, rate.week2, rate.week3);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
 
   describe('creating a valid capped crowdsale', () => {
     it('should fail with zero cap', async function () {
-      await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet, 0,
-        initialAlisFundBalance, goal).should.be.rejectedWith(EVMThrow);
+      await AlisCrowdsale.new(this.startBlock, this.endBlock,
+        rate.base, wallet, 0, initialAlisFundBalance, ether(goal),
+        rate.preSale, rate.week1, rate.week2, rate.week3)
+        .should.be.rejectedWith(EVMThrow);
     });
 
     it('should cap of ALIS token be 500 million', async function () {
