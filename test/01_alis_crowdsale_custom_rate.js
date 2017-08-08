@@ -57,6 +57,71 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
     });
   });
 
+  describe('Week2', () => {
+    it('should rate of week2 be 2,600 ALIS when just started', async function () {
+      const duration = 60;
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2600;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week2 be 2,600 ALIS when 1 minuit after started', async function () {
+      const duration = 60;
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2600;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week2 be 2,600 ALIS when 1 minute before ended', async function () {
+      const duration = (60 * 60 * 24 * 7) - 120; // 1 week - 2 minute.
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2600;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+  });
+
+  describe('Week3', () => {
+    it('should rate of week3 be 2,300 ALIS when just started', async function () {
+      const duration = 60;
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2300;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week3 be 2,300 ALIS when 1 minuit after started', async function () {
+      const duration = 60;
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2300;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week3 be 2,300 ALIS when few minute before ended', async function () {
+      // FIXME: This duration (600 sec) because of time management specification.
+      const duration = (60 * 60 * 24 * 7) - 600; // 1 week - 10 minute.
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2300;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+  });
+
   describe('base', () => {
     it('should base rate be 2,000 ALIS', async function () {
       await setTimingToBaseTokenRate();

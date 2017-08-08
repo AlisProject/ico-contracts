@@ -78,11 +78,17 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
     uint256 week = 604800; // 60 * 60 * 24 * 7
 
     if (now <= tokenSaleStartTimeStamp) {
-      // until 2017/09/01 02:00 UTC
+      // before 2017/09/01 02:00 UTC
       currentRate = 20000;
     } else if (now <= tokenSaleStartTimeStamp.add(week)) {
-      // until 2017/09/08 02:00 UTC
+      // before 2017/09/08 02:00 UTC
       currentRate = 2900;
+    } else if (now <= tokenSaleStartTimeStamp.add(week * 2)) {
+      // before 2017/09/15 02:00 UTC
+      currentRate = 2600;
+    } else if (now <= tokenSaleStartTimeStamp.add(week * 3)) {
+      // before 2017/09/21 02:00 UTC
+      currentRate = 2300;
     }
 
     return currentRate;
