@@ -1,4 +1,6 @@
+import moment from 'moment';
 import alis from '../../utilities/alis';
+import increaseTime from '../helpers/increaseTime';
 
 const fs = require('fs');
 const chai = require('chai');
@@ -18,7 +20,21 @@ export const should = chai
 export const AlisToken = artifacts.require('AlisToken.sol');
 export const AlisCrowdsale = artifacts.require('AlisCrowdsale.sol');
 export const cap = alis(crowdsaleParams.cap); // TODO: use BigNumber
-export const rate = new BigNumber(crowdsaleParams.rate);
+export const rate = crowdsaleParams.rate;
 export const alisFundAddress = crowdsaleParams.alisFundAddress;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 export const goal = new BigNumber(crowdsaleParams.goal);
+
+// Set time to token sale start time.
+export async function setTimingToTokenSaleStart() {
+  const now = await Math.floor(Date.now() / 1000);
+  // TODO: refactoring
+  const increaseDuration = 1504231200 - now;
+  await increaseTime(moment.duration(increaseDuration, 'second'));
+}
+
+// Set time to after week4 when token rate is base.
+export async function setTimingToBaseTokenRate() {
+  await setTimingToTokenSaleStart();
+  await increaseTime(moment.duration(3, 'weeks'));
+}
