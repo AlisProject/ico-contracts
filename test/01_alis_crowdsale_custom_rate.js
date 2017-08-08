@@ -5,7 +5,7 @@ import increaseTime from './helpers/increaseTime';
 
 import {
   AlisCrowdsale, cap, rate, initialAlisFundBalance, goal,
-  setTimingToTokenSaleStart, setTimingToBaseTokenRate,
+  setTimingToTokenSaleStart,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet]) => {
@@ -78,7 +78,7 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
-    it('should rate of week2 be 2,600 ALIS when 1 minute before ended', async function () {
+    it('should rate of week2 be 2,600 ALIS when 1 minuit before ended', async function () {
       const duration = (60 * 60 * 24 * 7) - 120; // 1 week - 2 minute.
       await increaseTime(moment.duration(duration, 'second'));
 
@@ -122,11 +122,33 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
     });
   });
 
-  describe('base', () => {
-    it('should base rate be 2,000 ALIS', async function () {
-      await setTimingToBaseTokenRate();
+  describe('From week4 to until the end of token sale', () => {
+    it('should rate of week4 be 2,000 ALIS when just started', async function () {
+      const duration = 600;
+      await increaseTime(moment.duration(duration, 'second'));
 
-      const expect = 2000; // base
+      const expect = 2000;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week4 be 2,000 ALIS when few minute after started', async function () {
+      const duration = 60;
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2000;
+      await advanceToBlock(this.endBlock - 1);
+      const actual = await this.crowdsale.getRate();
+      await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should rate of week4 be 2,000 ALIS when few minute before ended', async function () {
+      // FIXME: This duration (1,200 sec) because of time management specification.
+      const duration = (60 * 60 * 24 * 7) - 1200; // 1 week - 20 minute.
+      await increaseTime(moment.duration(duration, 'second'));
+
+      const expect = 2000;
       await advanceToBlock(this.endBlock - 1);
       const actual = await this.crowdsale.getRate();
       await actual.should.be.bignumber.equal(expect);
