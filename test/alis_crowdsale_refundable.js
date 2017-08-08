@@ -3,11 +3,15 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import {
-  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber,
+  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber, setTimingToBaseTokenRate
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
   const lessThanGoal = ether(goal).minus(ether(100));
+
+  before(async () => {
+    await setTimingToBaseTokenRate();
+  });
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
