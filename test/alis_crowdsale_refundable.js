@@ -84,17 +84,20 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
 
   describe('allow refunds', () => {
     it('should allow refunds after end if goal was not reached', async function () {
+      const beforeSend = web3.eth.getBalance(investor);
+
       await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.sendTransaction({ value: lessThanGoal, from: investor });
+      await this.crowdsale.sendTransaction({ value: lessThanGoal, from: investor, gasPrice: 0 });
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
 
-      const pre = web3.eth.getBalance(investor);
+      const sent = web3.eth.getBalance(investor);
       await this.crowdsale.claimRefund({ from: investor, gasPrice: 0 })
         .should.be.fulfilled;
-      const post = web3.eth.getBalance(investor);
+      const afterClaim = web3.eth.getBalance(investor);
 
-      post.minus(pre).should.be.bignumber.equal(lessThanGoal);
+      beforeSend.should.be.bignumber.equal(afterClaim);
+      afterClaim.minus(sent).should.be.bignumber.equal(lessThanGoal);
     });
 
     it('should allow refunds after end if goal was only 1 ether missing', async function () {
