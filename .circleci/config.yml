@@ -21,11 +21,4 @@ jobs:
             yarn run solium -- --dir ./contracts
       - run:
           name: test
-          command: |
-            sed -i '5i mocha:{reporter:"mocha-junit-reporter"},' truffle.js
-            yarn test
-      - store_artifacts:
-          path: test-results.xml
-          prefix: tests
-      - store_test_results:
-          path: test-results.xml
+          command: yarn test:all
