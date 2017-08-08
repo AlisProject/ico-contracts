@@ -3,7 +3,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import {
-  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber, setTimingToBaseTokenRate
+  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber, setTimingToBaseTokenRate,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
