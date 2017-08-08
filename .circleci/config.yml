@@ -15,7 +15,17 @@ jobs:
           name: compile
           command: yarn truffle compile
       - run:
+          name: lint
+          command: |
+            yarn run eslint .
+            yarn run solium -- --dir ./contracts
+      - run:
           name: test
-          command: yarn run eslint .
-          command: yarn run solium -- --dir ./contracts
-          command: yarn test
+          command: |
+            sed -i '5i mocha:{reporter:"mocha-junit-reporter"},' truffle.js
+            yarn test
+      - store_artifacts:
+          path: test-results.xml
+          prefix: tests
+      - store_test_results:
+          path: test-results.xml
