@@ -1,4 +1,6 @@
+import moment from 'moment';
 import alis from '../../utilities/alis';
+import increaseTime from '../helpers/increaseTime';
 
 const fs = require('fs');
 const chai = require('chai');
@@ -22,3 +24,11 @@ export const rate = new BigNumber(crowdsaleParams.rate);
 export const alisFundAddress = crowdsaleParams.alisFundAddress;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 export const goal = new BigNumber(crowdsaleParams.goal);
+
+// Set time to after week4 when token rate is base.
+export async function setTimingToBaseTokenRate() {
+  // TODO: refactoring
+  const now = await Math.floor(Date.now() / 1000);
+  const increaseDuration = 1504231200 - now;
+  await increaseTime(moment.duration(increaseDuration + 100, 'second'));
+}
