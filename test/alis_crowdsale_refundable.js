@@ -51,6 +51,14 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
       hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
     });
+
+    // bug fix
+    // https://github.com/AlisProject/contracts/pull/14
+    it('should goal unit be wei(not ether)', async () => {
+      const target = await AlisCrowdsale.deployed();
+      const actual = await target.goal();
+      actual.should.be.bignumber.equal(ether(goal));
+    });
   });
 
   describe('deny refunds', () => {
