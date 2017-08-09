@@ -17,7 +17,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, goal,
+      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
       rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
 
     this.token = AlisToken.at(await this.crowdsale.token());
@@ -84,12 +84,21 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
+    it('should goalReached() be false even if mint remaining tokens', async function () {
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      // goalReached() does not care about minted token amount because it depends weiRaised.
+      const goalReached = await this.crowdsale.goalReached();
+      await goalReached.should.equal(false);
+    });
+
     it('should not do anything if no remaining token', async function () {
       // No remaining token already.
       const capSameAsInitialAlisFundBalance = initialAlisFundBalance;
       this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
         rate.base, wallet, capSameAsInitialAlisFundBalance, initialAlisFundBalance,
-        goal, rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+        ether(goal), rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
 
       this.token = AlisToken.at(await this.crowdsale.token());
 
