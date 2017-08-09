@@ -17,6 +17,7 @@ module.exports = function deployContracts(deployer) {
   const actualGoal = web3.toWei(crowdsaleParams.goal, 'ether');
 
   deployer.deploy(AlisFund, fundParams.owners, fundParams.required).then(() =>
+    // Set AlisFund address to wallet of AlisCrowdsale.
     deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
       rate.base, AlisFund.address, actualCap,
       actualInitialAlisFundBalance, actualGoal,
