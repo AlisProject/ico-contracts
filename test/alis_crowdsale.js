@@ -3,20 +3,26 @@ import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisCrowdsale, alisFundAddress, cap, rate, initialAlisFundBalance,
-  should, goal } from './helpers/alis_helper';
+import { AlisToken, AlisCrowdsale, alisFundAddress, BigNumber, cap, rate,
+  initialAlisFundBalance, should, goal, setTimingToBaseTokenRate,
+} from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   const someOfTokenAmount = ether(42);
-  const expectedTokenAmount = rate.mul(someOfTokenAmount);
+  const expectedTokenAmount = new BigNumber(rate.base).mul(someOfTokenAmount);
   const expectedInitialTokenAmount = expectedTokenAmount.add(initialAlisFundBalance);
+
+  before(async () => {
+    await setTimingToBaseTokenRate();
+  });
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, wallet,
-      cap, initialAlisFundBalance, goal);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
+      rate.preSale, rate.week1, rate.week2, rate.week3);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -25,8 +31,9 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     it('should be correct fund address', async function () {
       // FIXME:
       const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
-      const cs = await AlisCrowdsale.new(this.startBlock, this.endBlock, rate, alisFundAddress,
-        cap, initialAlisFundBalance, goal);
+      const cs = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+        rate.base, alisFundAddress, cap, initialAlisFundBalance, ether(goal),
+        rate.preSale, rate.week1, rate.week2, rate.week3);
       const actual = await cs.wallet();
       actual.should.be.equal(expect);
     });
@@ -95,11 +102,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     });
 
     // initial + ( received ether * decimals ) = total supply
-    // 250,000,000 + ( 10,000 * 2,080 ) = 270,800,000
+    // 250,000,000 + ( 10,000 * 2,000 ) = 270,000,000
     it('should total supply be 270.8 million tokens after received 10,000 ether', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(ether(10000));
-      const expect = alis(270800000);
+      const expect = alis(270000000);
       const actual = await this.token.totalSupply();
       await actual.should.be.bignumber.equal(expect);
     });
