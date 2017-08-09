@@ -84,6 +84,15 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
+    it('should goalReached() be false even if mint remaining tokens', async function () {
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+
+      // goalReached() does not care about minted token amount because it depends weiRaised.
+      const goalReached = await this.crowdsale.goalReached();
+      await goalReached.should.equal(false);
+    });
+
     it('should not do anything if no remaining token', async function () {
       // No remaining token already.
       const capSameAsInitialAlisFundBalance = initialAlisFundBalance;
