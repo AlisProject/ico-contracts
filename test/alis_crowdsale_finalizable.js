@@ -17,7 +17,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, goal,
+      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
       rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
 
     this.token = AlisToken.at(await this.crowdsale.token());
@@ -98,7 +98,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       const capSameAsInitialAlisFundBalance = initialAlisFundBalance;
       this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
         rate.base, wallet, capSameAsInitialAlisFundBalance, initialAlisFundBalance,
-        goal, rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+        ether(goal), rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
 
       this.token = AlisToken.at(await this.crowdsale.token());
 
