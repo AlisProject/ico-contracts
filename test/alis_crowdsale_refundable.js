@@ -3,7 +3,8 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import {
-  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber, setTimingToBaseTokenRate,
+  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal, BigNumber,
+  setTimingToBaseTokenRate,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
@@ -30,7 +31,7 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
         .should.be.rejectedWith(EVMThrow);
     });
 
-    it.skip('should goal be 14,000 ETH', async function () {
+    it('should goal be 14,000 ETH', async function () {
       const expect = ether(14000);
       const actual = await this.crowdsale.goal();
       await actual.should.be.bignumber.equal(expect);
@@ -63,9 +64,11 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
 
   describe('deny refunds', () => {
     it('should deny refunds before end', async function () {
-      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.claimRefund({ from: investor })
+        .should.be.rejectedWith(EVMThrow);
       await advanceToBlock(this.endBlock - 1);
-      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.claimRefund({ from: investor })
+        .should.be.rejectedWith(EVMThrow);
     });
 
     it('should deny refunds after end if goal was reached', async function () {
@@ -73,7 +76,8 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
       await this.crowdsale.sendTransaction({ value: ether(goal), from: investor });
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
-      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.claimRefund({ from: investor })
+        .should.be.rejectedWith(EVMThrow);
     });
 
     it('should deny refunds after end if goal was exceeded', async function () {
@@ -82,15 +86,22 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
       await this.crowdsale.sendTransaction({ value: exceeded, from: investor });
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
-      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.claimRefund({ from: investor })
+        .should.be.rejectedWith(EVMThrow);
     });
 
-    it.skip('should deny refunds if cap was reached', async function () {
+    it('should deny refunds if cap was reached', async function () {
       await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.send(cap);
+
+      // offered amount / base rate = cap reaching amount
+      // 250000000 / 2000 = 125000
+      const capReachingAmount = await ether(125000);
+      await this.crowdsale.sendTransaction({ value: capReachingAmount, from: investor });
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
-      await this.crowdsale.claimRefund({ from: investor }).should.be.rejectedWith(EVMThrow);
+
+      await this.crowdsale.claimRefund({ from: investor })
+        .should.be.rejectedWith(EVMThrow);
     });
 
     it('should goalReached() be true', async function () {
@@ -106,12 +117,13 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
     });
   });
 
-  describe.skip('allow refunds', () => {
+  describe('allow refunds', () => {
     it('should allow refunds after end if goal was not reached', async function () {
       const beforeSend = web3.eth.getBalance(investor);
 
       await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.sendTransaction({ value: lessThanGoal, from: investor, gasPrice: 0 });
+      await this.crowdsale.sendTransaction(
+        { value: lessThanGoal, from: investor, gasPrice: 0 });
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
 
@@ -120,8 +132,8 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
         .should.be.fulfilled;
       const afterClaim = web3.eth.getBalance(investor);
 
-      beforeSend.should.be.bignumber.equal(afterClaim);
-      afterClaim.minus(sent).should.be.bignumber.equal(lessThanGoal);
+      await beforeSend.should.be.bignumber.equal(afterClaim);
+      await afterClaim.minus(sent).should.be.bignumber.equal(lessThanGoal);
     });
 
     it('should allow refunds after end if goal was only 1 ether missing', async function () {
