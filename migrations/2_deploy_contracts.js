@@ -1,6 +1,8 @@
 const fs = require('fs');
 
+const AlisFund = artifacts.require('AlisFund.sol');
 const AlisCrowdsale = artifacts.require('AlisCrowdsale.sol');
+const fundParams = JSON.parse(fs.readFileSync('../config/AlisFund.json', 'utf8'));
 const crowdsaleParams = JSON.parse(fs.readFileSync('../config/Crowdsale.json', 'utf8'));
 const rate = crowdsaleParams.rate;
 
@@ -14,8 +16,9 @@ module.exports = function deployContracts(deployer) {
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
   const actualGoal = web3.toWei(crowdsaleParams.goal, 'ether');
 
-  deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
-    rate.base, crowdsaleParams.alisFundAddress, actualCap,
-    actualInitialAlisFundBalance, actualGoal,
-    rate.preSale, rate.week1, rate.week2, rate.week3);
+  deployer.deploy(AlisFund, fundParams.owners, fundParams.required).then(() =>
+    deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
+      rate.base, AlisFund.address, actualCap,
+      actualInitialAlisFundBalance, actualGoal,
+      rate.preSale, rate.week1, rate.week2, rate.week3));
 };
