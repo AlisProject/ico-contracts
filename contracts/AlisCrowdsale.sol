@@ -12,8 +12,7 @@ import './AlisToken.sol';
 */
 contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
 
-  // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
-  uint256 constant WEEK = 604800;
+  uint256 constant WEEK = 600;
 
   /*
   * Token exchange rates of ETH and ALIS.
@@ -96,16 +95,12 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
     uint256 tokenSaleStartTimeStamp = 1504231200;
 
     if (now <= tokenSaleStartTimeStamp) {
-      // before 2017/09/01 02:00 UTC
       currentRate = ratePreSale;
     } else if (now <= tokenSaleStartTimeStamp.add(WEEK)) {
-      // before 2017/09/08 02:00 UTC
       currentRate = rateWeek1;
     } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(2))) {
-      // before 2017/09/15 02:00 UTC
       currentRate = rateWeek2;
     } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(3))) {
-      // before 2017/09/21 02:00 UTC
       currentRate = rateWeek3;
     }
 
