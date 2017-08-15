@@ -2,3 +2,4 @@
 truffle.js
 test/helpers/advanceToBlock.js
 test/helpers/increaseTime.js
+migrations/3_deploy_alis_fund.js
