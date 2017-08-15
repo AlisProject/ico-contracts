@@ -18,10 +18,10 @@ export const should = chai
   .should();
 
 export const AlisToken = artifacts.require('AlisToken.sol');
-export const AlisFund = artifacts.require('AlisFund.sol');
 export const AlisCrowdsale = artifacts.require('AlisCrowdsale.sol');
 export const cap = alis(crowdsaleParams.cap); // TODO: use BigNumber
 export const rate = crowdsaleParams.rate;
+export const alisFundAddress = crowdsaleParams.alisFundAddress;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 export const goal = new BigNumber(crowdsaleParams.goal);
 
