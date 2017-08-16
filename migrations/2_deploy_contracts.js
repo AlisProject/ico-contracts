@@ -21,5 +21,7 @@ module.exports = function deployContracts(deployer) {
     deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
       rate.base, AlisFund.address, actualCap,
       actualInitialAlisFundBalance, actualGoal,
-      rate.preSale, rate.week1, rate.week2, rate.week3));
+      rate.preSale, rate.week1, rate.week2, rate.week3,
+      crowdsaleParams.whiteList,
+    ));
 };

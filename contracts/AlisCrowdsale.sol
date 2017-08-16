@@ -4,13 +4,18 @@ pragma solidity ^0.4.13;
 import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
 import 'zeppelin/contracts/crowdsale/RefundableCrowdsale.sol';
 import 'zeppelin/contracts/token/MintableToken.sol';
+import './WhitelistedCrowdsale.sol';
 import './AlisToken.sol';
 
 
 /**
  * The Crowdsale contract of ALIS project.
 */
-contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
+contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
+
+  // ICO start date time 2017 Sep 1 2:00(UTC)
+  // Could not add to AlisCrowdsale.sol because of EVM said stack too deep.
+  uint256 constant ICO_START_TIME = 1504231200;
 
   // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
   uint256 constant WEEK = 604800;
@@ -34,11 +39,13 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   uint256 _ratePreSale,
   uint256 _rateWeek1,
   uint256 _rateWeek2,
-  uint256 _rateWeek3
+  uint256 _rateWeek3,
+  address[] _whiteList
   )
   Crowdsale(_startBlock, _endBlock, _baseRate, _wallet)
   CappedCrowdsale(_cap)
   RefundableCrowdsale(_goal)
+  WhitelistedCrowdsale(_whiteList)
   {
     ratePreSale = _ratePreSale;
     rateWeek1 = _rateWeek1;
@@ -70,6 +77,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   function buyTokens(address beneficiary) payable {
     require(beneficiary != 0x0);
     require(validPurchase());
+    require(saleAccepting());
 
     uint256 weiAmount = msg.value;
 
@@ -92,23 +100,27 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   function getRate() constant returns (uint256) {
     uint256 currentRate = rate;
 
-    // TODO: refactoring
-    uint256 tokenSaleStartTimeStamp = 1504231200;
-
-    if (now <= tokenSaleStartTimeStamp) {
+    if (now <= ICO_START_TIME) {
       // before 2017/09/01 02:00 UTC
       currentRate = ratePreSale;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK)) {
+    } else if (now <= ICO_START_TIME.add(WEEK)) {
       // before 2017/09/08 02:00 UTC
       currentRate = rateWeek1;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(2))) {
+    } else if (now <= ICO_START_TIME.add(WEEK.mul(2))) {
       // before 2017/09/15 02:00 UTC
       currentRate = rateWeek2;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(3))) {
+    } else if (now <= ICO_START_TIME.add(WEEK.mul(3))) {
       // before 2017/09/21 02:00 UTC
       currentRate = rateWeek3;
     }
 
     return currentRate;
+  }
+
+  // @return true if crowd sale is accepting.
+  function saleAccepting() internal constant returns (bool) {
+    bool acceptingAnyOne = now >= ICO_START_TIME;
+    bool whiteListedMember = isWhiteListMember(msg.sender);
+    return  acceptingAnyOne || whiteListedMember;
   }
 }

@@ -4,7 +4,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance, goal } from './helpers/alis_helper';
+  initialAlisFundBalance, goal, whiteList } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([wallet]) => {
   const lessThanCap = cap.div(5);
@@ -15,7 +15,7 @@ contract('AlisCrowdsale', ([wallet]) => {
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
       rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3);
+      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -24,7 +24,7 @@ contract('AlisCrowdsale', ([wallet]) => {
     it('should fail with zero cap', async function () {
       await AlisCrowdsale.new(this.startBlock, this.endBlock,
         rate.base, wallet, 0, initialAlisFundBalance, ether(goal),
-        rate.preSale, rate.week1, rate.week2, rate.week3)
+        rate.preSale, rate.week1, rate.week2, rate.week3, whiteList)
         .should.be.rejectedWith(EVMThrow);
     });
 
