@@ -4,13 +4,14 @@ pragma solidity ^0.4.13;
 import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
 import 'zeppelin/contracts/crowdsale/RefundableCrowdsale.sol';
 import 'zeppelin/contracts/token/MintableToken.sol';
+import './WhitelistedCrowdsale.sol';
 import './AlisToken.sol';
 
 
 /**
  * The Crowdsale contract of ALIS project.
 */
-contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
+contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
 
   // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
   uint256 constant WEEK = 604800;
@@ -34,11 +35,13 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale {
   uint256 _ratePreSale,
   uint256 _rateWeek1,
   uint256 _rateWeek2,
-  uint256 _rateWeek3
+  uint256 _rateWeek3,
+  address[] _whiteList
   )
   Crowdsale(_startBlock, _endBlock, _baseRate, _wallet)
   CappedCrowdsale(_cap)
   RefundableCrowdsale(_goal)
+  WhitelistedCrowdsale(_whiteList)
   {
     ratePreSale = _ratePreSale;
     rateWeek1 = _rateWeek1;
