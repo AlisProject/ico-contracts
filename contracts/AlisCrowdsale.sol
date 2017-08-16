@@ -73,6 +73,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   function buyTokens(address beneficiary) payable {
     require(beneficiary != 0x0);
     require(validPurchase());
+    require(saleAccepting());
 
     uint256 weiAmount = msg.value;
 
@@ -113,5 +114,15 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     }
 
     return currentRate;
+  }
+
+  // @return true if crowd sale is accepting.
+  function saleAccepting() internal constant returns (bool) {
+    // TODO: refactoring
+    uint256 tokenSaleStartTimeStamp = 1504231200;
+
+    bool acceptingAnyOne = now >= tokenSaleStartTimeStamp;
+    bool whiteListedMember = isWhiteListMember(msg.sender);
+    return  acceptingAnyOne || whiteListedMember;
   }
 }

@@ -2,13 +2,16 @@ import moment from 'moment';
 import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import increaseTime from './helpers/increaseTime';
+import EVMThrow from './helpers/EVMThrow';
 
 import {
   AlisCrowdsale, cap, rate, initialAlisFundBalance, goal,
-  setTimingToTokenSaleStart, whiteList,
+  setTimingToTokenSaleStart,
 } from './helpers/alis_helper';
 
-contract('AlisCrowdsale', ([owner, wallet]) => {
+contract('AlisCrowdsale', ([investor, owner, wallet, purchaser, whiteListedMember, notWhiteListedMember]) => {
+  const whiteList = [whiteListedMember];
+
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
@@ -19,11 +22,27 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
   });
 
   describe('creating a valid rate customizable crowdsale', () => {
-    it('should initial rate be 20,000 ALIS', async function () {
+    it('should initial rate be 20,000 ALIS for pre sale', async function () {
       const expect = 20000; // pre sale
       await advanceToBlock(this.endBlock - 1);
       const actual = await this.crowdsale.getRate();
       await actual.should.be.bignumber.equal(expect);
+    });
+  });
+
+  describe('Pre sale', () => {
+    const someOfTokenAmount = ether(42);
+
+    it('should reject payments if not white listed member', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: notWhiteListedMember })
+        .should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should accept payments if white listed member', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: whiteListedMember })
+        .should.be.fulfilled;
     });
   });
 
