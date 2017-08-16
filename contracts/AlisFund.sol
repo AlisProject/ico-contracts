@@ -15,12 +15,4 @@ contract AlisFund is MultiSigWallet {
   MultiSigWallet(_owners, _required)
   {
   }
-
-  /**
-   * Disable all functions what depends onlyWallet modifier.
-   */
-  modifier onlyWallet() {
-    revert();
-    _;
-  }
 }
