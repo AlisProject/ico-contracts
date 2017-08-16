@@ -12,6 +12,7 @@ const crowdsaleParams = JSON.parse(fs.readFileSync('./config/Crowdsale.json', 'u
 // exports
 
 export const BigNumber = web3.BigNumber;
+export const expect = chai.expect;
 export const should = chai
   .use(chaiAsPromised)
   .use(chaiBigNumber(BigNumber))
