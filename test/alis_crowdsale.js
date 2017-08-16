@@ -3,7 +3,7 @@ import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisFund, AlisCrowdsale, BigNumber, cap, rate,
+import { AlisToken, AlisCrowdsale, alisFundAddress, BigNumber, cap, rate,
   initialAlisFundBalance, should, goal, setTimingToBaseTokenRate,
 } from './helpers/alis_helper';
 
@@ -28,10 +28,12 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
   });
 
   describe('initialized correctly', () => {
-    it('should be correct fund address', async () => {
-      const fund = await AlisFund.deployed();
-      const cs = await AlisCrowdsale.deployed();
-      const expect = await fund.address;
+    it('should be correct fund address', async function () {
+      // FIXME:
+      const expect = '0x38924972b953fb27701494f9d80ca3a090f0dc1c';
+      const cs = await AlisCrowdsale.new(this.startBlock, this.endBlock,
+        rate.base, alisFundAddress, cap, initialAlisFundBalance, ether(goal),
+        rate.preSale, rate.week1, rate.week2, rate.week3);
       const actual = await cs.wallet();
       actual.should.be.equal(expect);
     });

@@ -10,6 +10,12 @@ module.exports = {
       gas: 4400000,
       gasPrice: 21000000000
     },
+    ropsten: {
+      network_id: 3,
+      host: "localhost",
+      port: 8545,
+      gas: 3500000
+    },
     development: {
       host: "localhost",
       port: 8545,

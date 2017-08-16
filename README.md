@@ -13,7 +13,7 @@ Let me know at Slack channel if you have any questions.
 1. `yarn truffle install`
 
 # test
-- `yarn test`
+- `yarn test:all`
 
 # debug
 - `yarn debug`
