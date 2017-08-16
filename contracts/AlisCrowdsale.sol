@@ -13,6 +13,10 @@ import './AlisToken.sol';
 */
 contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
 
+  // ICO start date time 2017 Sep 1 2:00(UTC)
+  // Could not add to AlisCrowdsale.sol because of EVM said stack too deep.
+  uint256 constant ICO_START_TIME = 1504231200;
+
   // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
   uint256 constant WEEK = 604800;
 
@@ -96,19 +100,16 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   function getRate() constant returns (uint256) {
     uint256 currentRate = rate;
 
-    // TODO: refactoring
-    uint256 tokenSaleStartTimeStamp = 1504231200;
-
-    if (now <= tokenSaleStartTimeStamp) {
+    if (now <= ICO_START_TIME) {
       // before 2017/09/01 02:00 UTC
       currentRate = ratePreSale;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK)) {
+    } else if (now <= ICO_START_TIME.add(WEEK)) {
       // before 2017/09/08 02:00 UTC
       currentRate = rateWeek1;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(2))) {
+    } else if (now <= ICO_START_TIME.add(WEEK.mul(2))) {
       // before 2017/09/15 02:00 UTC
       currentRate = rateWeek2;
-    } else if (now <= tokenSaleStartTimeStamp.add(WEEK.mul(3))) {
+    } else if (now <= ICO_START_TIME.add(WEEK.mul(3))) {
       // before 2017/09/21 02:00 UTC
       currentRate = rateWeek3;
     }
@@ -118,10 +119,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
 
   // @return true if crowd sale is accepting.
   function saleAccepting() internal constant returns (bool) {
-    // TODO: refactoring
-    uint256 tokenSaleStartTimeStamp = 1504231200;
-
-    bool acceptingAnyOne = now >= tokenSaleStartTimeStamp;
+    bool acceptingAnyOne = now >= ICO_START_TIME;
     bool whiteListedMember = isWhiteListMember(msg.sender);
     return  acceptingAnyOne || whiteListedMember;
   }

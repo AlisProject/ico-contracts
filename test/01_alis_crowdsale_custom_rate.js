@@ -9,7 +9,7 @@ import {
   setTimingToTokenSaleStart,
 } from './helpers/alis_helper';
 
-contract('AlisCrowdsale', ([investor, owner, wallet, purchaser, whiteListedMember, notWhiteListedMember]) => {
+contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhiteListedMember]) => {
   const whiteList = [whiteListedMember];
 
   beforeEach(async function () {
