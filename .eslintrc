@@ -39,7 +39,14 @@
           "_id"
         ]
       }
-    ]
+    ],
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-await-in-loop": "off"
   },
   "globals": {
     "web3": true,

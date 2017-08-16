@@ -5,7 +5,7 @@ import {
   initialAlisFundBalance, goal, setTimingToBaseTokenRate, whiteList,
 } from './helpers/alis_helper';
 
-contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
+contract('AlisCrowdsale', ([wallet]) => {
   before(async () => {
     await setTimingToBaseTokenRate();
   });

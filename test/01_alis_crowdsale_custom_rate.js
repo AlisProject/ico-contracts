@@ -5,7 +5,7 @@ import increaseTime from './helpers/increaseTime';
 
 import {
   AlisCrowdsale, cap, rate, initialAlisFundBalance, goal,
-  setTimingToTokenSaleStart,
+  setTimingToTokenSaleStart, whiteList,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet]) => {
@@ -15,7 +15,7 @@ contract('AlisCrowdsale', ([owner, wallet]) => {
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
       rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList, { from: owner });
   });
 
   describe('creating a valid rate customizable crowdsale', () => {

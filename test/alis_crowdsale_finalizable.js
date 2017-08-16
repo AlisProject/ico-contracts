@@ -4,7 +4,7 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance, goal, should, setTimingToBaseTokenRate,
+  initialAlisFundBalance, goal, should, setTimingToBaseTokenRate, whiteList,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
@@ -18,7 +18,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
       rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList, { from: owner });
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -98,7 +98,8 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       const capSameAsInitialAlisFundBalance = initialAlisFundBalance;
       this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
         rate.base, wallet, capSameAsInitialAlisFundBalance, initialAlisFundBalance,
-        ether(goal), rate.preSale, rate.week1, rate.week2, rate.week3, { from: owner });
+        ether(goal), rate.preSale, rate.week1, rate.week2, rate.week3,
+        whiteList, { from: owner });
 
       this.token = AlisToken.at(await this.crowdsale.token());
 
