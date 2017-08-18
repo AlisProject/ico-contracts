@@ -1,5 +1,7 @@
 {
+  // TODO:
   "startBlock": 900000,
+  // TODO:
   "endBlock": 1000000,
   "cap": 500000000,
   "initialAlisFundBalance": 250000000,
@@ -12,6 +14,7 @@
     "base": 2000
   },
   "whiteList": [
+    // TODO:
     "0x9f874e3dd3b765430682a62649933acdaae1d424",
     "0xcfc0545d7e6f2ce0e815a7120aecd485ea466f39",
     "0xc28b49ab01335f2ccd17146f1cd7d6607ef984e1"
