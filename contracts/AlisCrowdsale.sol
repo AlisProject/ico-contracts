@@ -71,6 +71,9 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
       token.mint(wallet, remaining);
     }
 
+    // change AlisToken owner to AlisFund.
+    token.transferOwnership(wallet);
+
     // From RefundableCrowdsale#finalization
     if (goalReached()) {
       vault.close();
