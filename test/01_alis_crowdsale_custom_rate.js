@@ -31,7 +31,7 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
   });
 
   describe('Pre sale', () => {
-    const someOfTokenAmount = ether(42);
+    const someOfTokenAmount = ether(10);
 
     it('should reject payments if not white listed member', async function () {
       await advanceToBlock(this.startBlock - 1);
@@ -43,6 +43,33 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: whiteListedMember })
         .should.be.fulfilled;
+    });
+
+    it('should accept payments 249,999 ALIS tokens', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      // ether * rate of pre sale = ALIS tokens.
+      // 12.49995 * 20,000 = 249,999
+      const etherAmount = await ether(12.49995);
+      await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember })
+        .should.be.fulfilled;
+    });
+
+    it('should accept payments 250,000 ALIS tokens', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      // ether * rate of pre sale = ALIS tokens.
+      // 12.5 * 20,000 = 250,000
+      const etherAmount = await ether(12.5);
+      await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember })
+        .should.be.fulfilled;
+    });
+
+    it('should reject payments 250,001 ALIS tokens', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      // ether * rate of pre sale = ALIS tokens.
+      // 12.50005 * 20,000 = 250,001
+      const etherAmount = await ether(12.50005);
+      await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember })
+        .should.be.rejectedWith(EVMThrow);
     });
   });
 
@@ -74,6 +101,15 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
       await advanceToBlock(this.endBlock - 1);
       const actual = await this.crowdsale.getRate();
       await actual.should.be.bignumber.equal(expect);
+    });
+
+    it('should accept payments 250,001 ALIS tokens', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      // ether * rate of pre sale = ALIS tokens.
+      // 12.50005 * 20,000 = 250,001
+      const etherAmount = await ether(12.50005);
+      await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember })
+        .should.be.fulfilled;
     });
   });
 
