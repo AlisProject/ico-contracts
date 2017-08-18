@@ -15,10 +15,11 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
 
   // ICO start date time 2017 Sep 1 2:00(UTC)
   // Could not add to AlisCrowdsale.json because of EVM said stack too deep.
+  // TODO:
   uint256 constant ICO_START_TIME = 1504231200;
 
   // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
-  uint256 constant WEEK = 604800;
+  uint256 constant WEEK = 600;
 
   /*
   * Token exchange rates of ETH and ALIS.
