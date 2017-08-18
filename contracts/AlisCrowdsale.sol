@@ -92,6 +92,11 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
 
     uint256 weiAmount = msg.value;
 
+    // for presale
+    if ( isPresale() ) {
+      checkLimit(weiAmount);
+    }
+
     // calculate token amount to be created
     uint256 tokens = weiAmount.mul(getRate());
 
@@ -133,5 +138,10 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     bool acceptingAnyOne = now >= ICO_START_TIME;
     bool whiteListedMember = isWhiteListMember(msg.sender);
     return  acceptingAnyOne || whiteListedMember;
+  }
+
+  // @return true if crowd sale is pre sale.
+  function isPresale() internal constant returns (bool) {
+    return now <= ICO_START_TIME;
   }
 }
