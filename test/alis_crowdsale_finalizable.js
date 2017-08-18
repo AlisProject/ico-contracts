@@ -36,11 +36,18 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       should.exist(event);
     });
 
-    it('finishes minting of token', async function () {
+    it('do not finishes minting of token', async function () {
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
       const finished = await this.token.mintingFinished();
-      finished.should.equal(true);
+      finished.should.equal(false);
+    });
+
+    it('should change owner of AlisToken to AlisFund', async function () {
+      await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner });
+      const actual = await this.token.owner();
+      actual.should.equal(wallet);
     });
   });
 
