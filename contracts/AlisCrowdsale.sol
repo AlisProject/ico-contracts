@@ -60,7 +60,10 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     return new AlisToken();
   }
 
-  // overriding RefundableCrowdsale#finalization to store remaining tokens.
+  // overriding RefundableCrowdsale#finalization
+  // - To store remaining tokens.
+  // - To minting unfinished because of our consensus algorithm.
+  //   - https://alisproject.github.io/whitepaper/whitepaper_v1.01.pdf
   function finalization() internal {
     uint256 remaining = cap.sub(token.totalSupply());
 
@@ -68,7 +71,12 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
       token.mint(wallet, remaining);
     }
 
-    super.finalization();
+    // From RefundableCrowdsale#finalization
+    if (goalReached()) {
+      vault.close();
+    } else {
+      vault.enableRefunds();
+    }
   }
 
   // overriding Crowdsale#buyTokens to rate customizable.
