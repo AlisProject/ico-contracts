@@ -14,7 +14,7 @@ import './AlisToken.sol';
 contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
 
   // ICO start date time 2017 Sep 1 2:00(UTC)
-  // Could not add to AlisCrowdsale.sol because of EVM said stack too deep.
+  // Could not add to AlisCrowdsale.json because of EVM said stack too deep.
   uint256 constant ICO_START_TIME = 1504231200;
 
   // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
@@ -60,7 +60,10 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     return new AlisToken();
   }
 
-  // overriding RefundableCrowdsale#finalization to store remaining tokens.
+  // overriding RefundableCrowdsale#finalization
+  // - To store remaining tokens.
+  // - To minting unfinished because of our consensus algorithm.
+  //   - https://alisproject.github.io/whitepaper/whitepaper_v1.01.pdf
   function finalization() internal {
     uint256 remaining = cap.sub(token.totalSupply());
 
@@ -68,7 +71,15 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
       token.mint(wallet, remaining);
     }
 
-    super.finalization();
+    // change AlisToken owner to AlisFund.
+    token.transferOwnership(wallet);
+
+    // From RefundableCrowdsale#finalization
+    if (goalReached()) {
+      vault.close();
+    } else {
+      vault.enableRefunds();
+    }
   }
 
   // overriding Crowdsale#buyTokens to rate customizable.
