@@ -135,9 +135,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
 
   // @return true if crowd sale is accepting.
   function saleAccepting() internal constant returns (bool) {
-    bool acceptingAnyOne = now >= ICO_START_TIME;
-    bool whiteListedMember = isWhiteListMember(msg.sender);
-    return  acceptingAnyOne || whiteListedMember;
+    return !isPresale() || isWhiteListMember(msg.sender);
   }
 
   // @return true if crowd sale is pre sale.

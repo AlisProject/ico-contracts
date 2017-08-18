@@ -31,7 +31,7 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
   });
 
   describe('Pre sale', () => {
-    const someOfTokenAmount = ether(11);
+    const someOfTokenAmount = ether(10);
 
     it('should reject payments if not white listed member', async function () {
       await advanceToBlock(this.startBlock - 1);
