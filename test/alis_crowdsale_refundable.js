@@ -32,15 +32,15 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
         .should.be.rejectedWith(EVMThrow);
     });
 
-    it('should goal be 14,000 ETH', async function () {
-      const expect = ether(14000);
+    it('should goal be 11,666 ETH', async function () {
+      const expect = ether(11666);
       const actual = await this.crowdsale.goal();
       await actual.should.be.bignumber.equal(expect);
     });
 
     it('should goal be 350,000,000 JPY', async () => {
-      const goalAsJPY = new BigNumber(350000000); // 3.5億円
-      const expectedEtherPrice = new BigNumber(25000);
+      const goalAsJPY = new BigNumber(349980000); // 約3.5億円
+      const expectedEtherPrice = new BigNumber(30000); // 3万円
       const convertedGoal = expectedEtherPrice.times(goal);
       await goalAsJPY.should.be.bignumber.equal(convertedGoal);
     });
