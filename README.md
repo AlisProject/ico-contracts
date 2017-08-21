@@ -14,6 +14,7 @@ Let me know at Slack channel if you have any questions.
 
 # Prerequisite 
 - node.js
+    - See: `.node-version`
 - yarn
 
 # Usage
