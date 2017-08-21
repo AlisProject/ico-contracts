@@ -95,7 +95,7 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
 
-      // goalReached() does not care about minted token amount because it depends weiRaised.
+      // goalReached() does not care about minted ALIS token amount because it depends weiRaised.
       const goalReached = await this.crowdsale.goalReached();
       await goalReached.should.equal(false);
     });

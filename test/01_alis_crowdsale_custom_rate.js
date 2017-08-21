@@ -31,11 +31,11 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
   });
 
   describe('Pre sale', () => {
-    const someOfTokenAmount = ether(10);
+    const someOfEtherAmount = ether(10);
 
     it('should reject payments if not white listed member', async function () {
       await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: notWhiteListedMember })
+      await this.crowdsale.buyTokens(investor, { value: someOfEtherAmount, from: notWhiteListedMember })
         .should.be.rejectedWith(EVMThrow);
     });
 
@@ -44,7 +44,7 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
 
       const beforeSend = web3.eth.getBalance(investor);
       await this.crowdsale.sendTransaction(
-        { value: someOfTokenAmount, from: investor, gasPrice: 0 })
+        { value: someOfEtherAmount, from: investor, gasPrice: 0 })
         .should.be.rejectedWith(EVMThrow);
 
       const afterRejected = web3.eth.getBalance(investor);
@@ -53,7 +53,7 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
 
     it('should accept payments if white listed member', async function () {
       await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: whiteListedMember })
+      await this.crowdsale.buyTokens(investor, { value: someOfEtherAmount, from: whiteListedMember })
         .should.be.fulfilled;
     });
 
@@ -129,7 +129,7 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
       await actual.should.be.bignumber.equal(expect);
     });
 
-    it('should accept payments 250,001 ALIS tokens', async function () {
+    it('should accept payments over 250,001 ALIS tokens', async function () {
       await advanceToBlock(this.startBlock - 1);
       // ether * rate of pre sale = ALIS tokens.
       // 12.50005 * 20,000 = 250,001

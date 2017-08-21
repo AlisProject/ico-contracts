@@ -13,12 +13,9 @@ import './AlisToken.sol';
 */
 contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
 
-  // ICO start date time 2017 Sep 1 2:00(UTC)
-  // Could not add to AlisCrowdsale.json because of EVM said stack too deep.
+  // ICO start date time. 1 Sep 2017 2:00(UTC)
+  // Could not add to Crowdsale.json because of EVM said stack too deep.
   uint256 constant ICO_START_TIME = 1504231200;
-
-  // Seconds of one week. (60 * 60 * 24 * 7) = 604,800
-  uint256 constant WEEK = 604800;
 
   /*
   * Token exchange rates of ETH and ALIS.
@@ -61,7 +58,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   }
 
   // overriding RefundableCrowdsale#finalization
-  // - To store remaining tokens.
+  // - To store remaining ALIS tokens.
   // - To minting unfinished because of our consensus algorithm.
   //   - https://alisproject.github.io/whitepaper/whitepaper_v1.01.pdf
   function finalization() internal {
@@ -119,13 +116,13 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     if (now <= ICO_START_TIME) {
       // before 2017/09/01 02:00 UTC
       currentRate = ratePreSale;
-    } else if (now <= ICO_START_TIME.add(WEEK)) {
+    } else if (now <= ICO_START_TIME.add(1 weeks)) {
       // before 2017/09/08 02:00 UTC
       currentRate = rateWeek1;
-    } else if (now <= ICO_START_TIME.add(WEEK.mul(2))) {
+    } else if (now <= ICO_START_TIME.add(2 weeks)) {
       // before 2017/09/15 02:00 UTC
       currentRate = rateWeek2;
-    } else if (now <= ICO_START_TIME.add(WEEK.mul(3))) {
+    } else if (now <= ICO_START_TIME.add(3 weeks)) {
       // before 2017/09/21 02:00 UTC
       currentRate = rateWeek3;
     }
