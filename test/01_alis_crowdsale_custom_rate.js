@@ -39,6 +39,18 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
         .should.be.rejectedWith(EVMThrow);
     });
 
+    it('should not lose ETH if payments were rejected in pre sale', async function () {
+      await advanceToBlock(this.startBlock - 1);
+
+      const beforeSend = web3.eth.getBalance(investor);
+      await this.crowdsale.sendTransaction(
+        { value: someOfTokenAmount, from: investor, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(investor);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
+    });
+
     it('should accept payments if white listed member', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: whiteListedMember })
@@ -70,6 +82,20 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
       const etherAmount = await ether(12.50005);
       await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember })
         .should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should not lose ETH if payments 250,001 ALIS tokens', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      const beforeSend = web3.eth.getBalance(whiteListedMember);
+
+      // ether * rate of pre sale = ALIS tokens.
+      // 12.50005 * 20,000 = 250,001
+      const etherAmount = await ether(12.50005);
+      await this.crowdsale.buyTokens(investor, { value: etherAmount, from: whiteListedMember, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(whiteListedMember);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
     });
   });
 

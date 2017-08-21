@@ -76,6 +76,16 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
         .should.be.rejectedWith(EVMThrow);
     });
 
+    it('should not lose ETH if payments were rejected before start', async function () {
+      const beforeSend = web3.eth.getBalance(investor);
+      await this.crowdsale.sendTransaction(
+        { value: someOfTokenAmount, from: investor, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(investor);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
+    });
+
     it('should accept payments after start', async function () {
       await advanceToBlock(this.startBlock - 1);
       await this.crowdsale.send(someOfTokenAmount).should.be.fulfilled;
@@ -87,6 +97,17 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       await this.crowdsale.send(someOfTokenAmount).should.be.rejectedWith(EVMThrow);
       await this.crowdsale.buyTokens(investor, { value: someOfTokenAmount, from: purchaser })
         .should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should not lose ETH if payments were rejected after end', async function () {
+      await advanceToBlock(this.endBlock);
+      const beforeSend = web3.eth.getBalance(investor);
+      await this.crowdsale.sendTransaction(
+        { value: someOfTokenAmount, from: investor, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(investor);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
     });
   });
 
