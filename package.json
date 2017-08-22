@@ -1,9 +1,13 @@
 {
   "name": "contracts",
-  "version": "0.1.0",
-  "description": "Token contracts of ALIS.",
-  "main": "index.js",
-  "repository": "https://github.com/AlisProject/contracts",
+  "version": "1.0.0",
+  "description": "The contracts of ALIS project.",
+  "main": "truffle.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlisProject/contracts.git"
+  },
+  "homepage": "https://github.com/AlisProject/contracts",
   "author": "sot528 <sot528@gmail.com>",
   "license": "GPL-3.0",
   "devDependencies": {
