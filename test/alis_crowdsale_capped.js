@@ -4,10 +4,15 @@ import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
 import { AlisToken, AlisCrowdsale, cap, rate,
-  initialAlisFundBalance, goal, whiteList } from './helpers/alis_helper';
+  initialAlisFundBalance, goal, whiteList, setTimingToBaseTokenRate,
+} from './helpers/alis_helper';
 
-contract('AlisCrowdsale', ([wallet]) => {
+contract('AlisCrowdsale', ([investor, wallet]) => {
   const lessThanCap = cap.div(5);
+
+  before(async () => {
+    await setTimingToBaseTokenRate();
+  });
 
   beforeEach(async function () {
     this.startBlock = web3.eth.blockNumber + 10;
@@ -54,8 +59,30 @@ contract('AlisCrowdsale', ([wallet]) => {
       await this.crowdsale.send(1).should.be.rejectedWith(EVMThrow);
     });
 
+    it('should not lose ETH if payments outside cap', async function () {
+      await this.crowdsale.send(cap);
+
+      const beforeSend = web3.eth.getBalance(investor);
+      await this.crowdsale.sendTransaction(
+        { value: 1, from: investor, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(investor);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
+    });
+
     it('should reject payments that exceed cap', async function () {
       await this.crowdsale.send(cap.plus(1)).should.be.rejectedWith(EVMThrow);
+    });
+
+    it('should not lose ETH if payments that exceed cap', async function () {
+      const beforeSend = web3.eth.getBalance(investor);
+      await this.crowdsale.sendTransaction(
+        { value: cap.plus(1), from: investor, gasPrice: 0 })
+        .should.be.rejectedWith(EVMThrow);
+
+      const afterRejected = web3.eth.getBalance(investor);
+      await afterRejected.should.be.bignumber.equal(beforeSend);
     });
   });
 

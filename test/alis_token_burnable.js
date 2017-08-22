@@ -2,7 +2,7 @@ import alis from '../utilities/alis';
 import ether from './helpers/ether';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisCrowdsale, expect, cap, rate,
+import { AlisToken, AlisCrowdsale, should, cap, rate,
   initialAlisFundBalance, goal, whiteList,
 } from './helpers/alis_helper';
 
@@ -31,7 +31,7 @@ contract('AlisToken', ([wallet]) => {
     totalSupply.should.be.bignumber.equal(expectedTokenSupply);
 
     const event = logs.find(e => e.event === 'Burn');
-    await expect(event).to.exist;
+    should.exist(event);
   });
 
   it('cannot burn more tokens than your balance', async () => {
