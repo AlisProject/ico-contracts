@@ -17,6 +17,9 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   // Could not add to Crowdsale.json because of EVM said stack too deep.
   uint256 constant ICO_START_TIME = 1504231200;
 
+  // FIXME:
+  uint256 public tokenCap = 500000000 ether;
+
   /*
   * Token exchange rates of ETH and ALIS.
   */
@@ -57,12 +60,26 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     return new AlisToken();
   }
 
+  // overriding CappedCrowdsale#validPurchase to add extra token cap logic
+  // @return true if investors can buy at the moment
+  function validPurchase() internal constant returns (bool) {
+    bool withinCap = token.totalSupply().add(msg.value.mul(getRate())) <= tokenCap;
+    return super.validPurchase() && withinCap;
+  }
+
+  // overriding Crowdsale#hasEnded to add cap logic
+  // @return true if crowdsale event has ended
+  function hasEnded() public constant returns (bool) {
+    bool capReached = token.totalSupply() >= tokenCap;
+    return super.hasEnded() || capReached;
+  }
+
   // overriding RefundableCrowdsale#finalization
   // - To store remaining ALIS tokens.
   // - To minting unfinished because of our consensus algorithm.
   //   - https://alisproject.github.io/whitepaper/whitepaper_v1.01.pdf
   function finalization() internal {
-    uint256 remaining = cap.sub(token.totalSupply());
+    uint256 remaining = tokenCap.sub(token.totalSupply());
 
     if (remaining > 0) {
       token.mint(wallet, remaining);

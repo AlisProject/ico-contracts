@@ -1,7 +1,8 @@
 {
   "startBlock": 900000,
   "endBlock": 1000000,
-  "cap": 500000000,
+  "cap": 125000,
+  "tokenCap": 500000000,
   "initialAlisFundBalance": 250000000,
   "goal": 11666,
   "rate": {

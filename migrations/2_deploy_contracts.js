@@ -12,7 +12,9 @@ function alis(n) {
 }
 
 module.exports = function deployContracts(deployer) {
-  const actualCap = alis(crowdsaleParams.cap);
+  const actualCap = web3.toWei(crowdsaleParams.cap, 'ether');
+  // TODO:
+  // const actualTokenCap = alis(crowdsaleParams.tokenCap);
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
   const actualGoal = web3.toWei(crowdsaleParams.goal, 'ether');
 

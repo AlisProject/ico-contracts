@@ -33,9 +33,15 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
         .should.be.rejectedWith(EVMThrow);
     });
 
+    it('should cap of ETH be 125,000', async function () {
+      const expect = ether(125000);
+      const tokenCap = await this.crowdsale.cap();
+      await tokenCap.toNumber().should.be.bignumber.equal(expect);
+    });
+
     it('should cap of ALIS token be 500 million', async function () {
       const expect = alis(500000000);
-      const tokenCap = await this.crowdsale.cap();
+      const tokenCap = await this.crowdsale.tokenCap();
       await tokenCap.toNumber().should.be.bignumber.equal(expect);
     });
   });

@@ -114,6 +114,13 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       let actual = await this.token.balanceOf(wallet);
       await actual.should.be.bignumber.equal(expect);
 
+      await advanceToBlock(this.startBlock - 1);
+
+      // cap reached.
+      // ether * rate = sold amount
+      // 125,000 * 2,000 = 250,000,000
+      await this.crowdsale.send(ether(125000));
+
       await advanceToBlock(this.endBlock);
       await this.crowdsale.finalize({ from: owner });
 

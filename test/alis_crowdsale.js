@@ -52,11 +52,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
-    // offering amount = cap - total supply.
+    // offering amount = token cap - total supply.
     it('should offering amount be 250 million tokens.', async function () {
       const expect = alis(250000000);
       const totalSupply = await this.token.totalSupply();
-      const crowdSaleCap = await this.crowdsale.cap();
+      const crowdSaleCap = await this.crowdsale.tokenCap();
       const actual = crowdSaleCap.sub(totalSupply);
       await actual.should.be.bignumber.equal(expect);
     });
