@@ -8,7 +8,7 @@ import { AlisToken, AlisCrowdsale, icoStartTime, cap, tokenCap, rate, BigNumber,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([investor, wallet]) => {
-  const lessThanCap = cap.div(5);
+  const lessThanCap = ether(cap).div(5);
 
   // OfferedValue / base rate = token cap of ether
   // 250000000 / 2000 = 125000
@@ -23,7 +23,7 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
-      rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
+      rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -54,21 +54,21 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
     });
 
     it('should accept payments within cap', async function () {
-      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+      await this.crowdsale.send(ether(cap).minus(lessThanCap)).should.be.fulfilled;
     });
 
     it('should accept payments just cap', async function () {
-      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+      await this.crowdsale.send(ether(cap).minus(lessThanCap)).should.be.fulfilled;
       await this.crowdsale.send(lessThanCap).should.be.fulfilled;
     });
 
     it('should reject payments outside cap', async function () {
-      await this.crowdsale.send(cap);
+      await this.crowdsale.send(ether(cap));
       await this.crowdsale.send(1).should.be.rejectedWith(EVMThrow);
     });
 
     it('should not lose ETH if payments outside cap', async function () {
-      await this.crowdsale.send(cap);
+      await this.crowdsale.send(ether(cap));
 
       const beforeSend = web3.eth.getBalance(investor);
       await this.crowdsale.sendTransaction(
@@ -80,13 +80,13 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
     });
 
     it('should reject payments that exceed cap', async function () {
-      await this.crowdsale.send(cap.plus(1)).should.be.rejectedWith(EVMThrow);
+      await this.crowdsale.send(ether(cap).plus(1)).should.be.rejectedWith(EVMThrow);
     });
 
     it('should not lose ETH if payments that exceed cap', async function () {
       const beforeSend = web3.eth.getBalance(investor);
       await this.crowdsale.sendTransaction(
-        { value: cap.plus(1), from: investor, gasPrice: 0 })
+        { value: ether(cap).plus(1), from: investor, gasPrice: 0 })
         .should.be.rejectedWith(EVMThrow);
 
       const afterRejected = web3.eth.getBalance(investor);
@@ -95,7 +95,7 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
 
     // bug fix
     it('should not over 500,000,000 ALIS token if just cap', async function () {
-      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+      await this.crowdsale.send(ether(cap).minus(lessThanCap)).should.be.fulfilled;
       await this.crowdsale.send(lessThanCap).should.be.fulfilled;
 
       const totalSupply = await new BigNumber(await this.token.totalSupply());
@@ -173,13 +173,13 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
     });
 
     it('should not be ended even if immediately before cap', async function () {
-      await this.crowdsale.send(cap.minus(1));
+      await this.crowdsale.send(ether(cap).minus(1));
       const hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
     });
 
     it('should be ended if cap reached', async function () {
-      await this.crowdsale.send(cap);
+      await this.crowdsale.send(ether(cap));
       const hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(true);
     });

@@ -20,13 +20,13 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
-      rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList, { from: owner });
+      rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList, { from: owner });
   });
 
   describe('creating a valid refundable crowdsale', () => {
     it('should fail with zero goal', async function () {
       await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
-        rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, 0,
+        rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, 0,
         whiteList, { from: owner })
         .should.be.rejectedWith(EVMThrow);
     });

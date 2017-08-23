@@ -21,7 +21,7 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     this.endBlock = web3.eth.blockNumber + 20;
 
     this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
-      rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
+      rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
