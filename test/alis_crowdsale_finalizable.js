@@ -8,6 +8,10 @@ import { AlisToken, AlisCrowdsale, icoStartTime, cap, tokenCap, rate,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
+  // (token cap of ether / 100) * 99 = 99% token cap of ether
+  // (125,000 / 100) * 99 = 123,750
+  const thresholdOfEther = ether(123750);
+
   before(async () => {
     await setTimingToBaseTokenRate();
   });
@@ -25,6 +29,28 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
   describe('finalize', () => {
     it('can be finalized by owner after ending', async function () {
       await advanceToBlock(this.endBlock);
+      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
+    });
+
+    it('can be finalized when token cap reached 99%', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.send(thresholdOfEther);
+      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
+    });
+
+    it('can be finalized when token cap over 99%', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.send(thresholdOfEther.plus(1));
+      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
+    });
+
+    it('can be finalized when just token cap reached', async function () {
+      // OfferedValue / base rate = token cap of ether
+      // 250000000 / 2000 = 125000
+      const tokenCapOfEther = ether(125000);
+
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.send(tokenCapOfEther);
       await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
     });
 
@@ -131,6 +157,12 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
   describe('reject finalize', () => {
     it('cannot be finalized before ending', async function () {
       await this.crowdsale.finalize({ from: owner }).should.be.rejectedWith(EVMThrow);
+    });
+
+    it('can not be finalized when token cap is not reached 99%', async function () {
+      await advanceToBlock(this.startBlock - 1);
+      await this.crowdsale.send(thresholdOfEther.minus(1));
+      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
     });
 
     it('cannot be finalized by third party after ending', async function () {
