@@ -20,7 +20,9 @@ export const should = chai
 export const AlisToken = artifacts.require('AlisToken.sol');
 export const AlisFund = artifacts.require('AlisFund.sol');
 export const AlisCrowdsale = artifacts.require('AlisCrowdsale.sol');
-export const cap = alis(crowdsaleParams.cap); // TODO: use BigNumber
+export const icoStartTime = crowdsaleParams.icoStartTime;
+export const cap = crowdsaleParams.cap;
+export const tokenCap = crowdsaleParams.tokenCap;
 export const rate = crowdsaleParams.rate;
 export const initialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
 export const goal = new BigNumber(crowdsaleParams.goal);
@@ -29,8 +31,7 @@ export const whiteList = crowdsaleParams.whiteList;
 // Set time to token sale start time.
 export async function setTimingToTokenSaleStart() {
   const now = await Math.floor(Date.now() / 1000);
-  // TODO: refactoring
-  const increaseDuration = 1504231200 - now;
+  const increaseDuration = icoStartTime - now;
   await increaseTime(moment.duration(increaseDuration, 'second'));
 }
 

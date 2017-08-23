@@ -13,30 +13,31 @@ import './AlisToken.sol';
 */
 contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
 
-  // ICO start date time. 1 Sep 2017 2:00(UTC)
-  // Could not add to Crowdsale.json because of EVM said stack too deep.
-  uint256 constant ICO_START_TIME = 1504231200;
-
   /*
   * Token exchange rates of ETH and ALIS.
+  * Could not add to Crowdsale.json because of EVM said stack too deep.
   */
-  uint256 public ratePreSale;
-  uint256 public rateWeek1;
-  uint256 public rateWeek2;
-  uint256 public rateWeek3;
+  uint256 constant RATE_PRE_SALE = 20000;
+  uint256 constant RATE_WEEK_1 = 2900;
+  uint256 constant RATE_WEEK_2 = 2600;
+  uint256 constant RATE_WEEK_3 = 2300;
+
+  // ICO start date time.
+  uint256 public icoStartTime;
+
+  // The cap amount of ALIS tokens.
+  uint256 public tokenCap;
 
   function AlisCrowdsale(
   uint256 _startBlock,
+  uint256 _icoStartTime,
   uint256 _endBlock,
   uint256 _baseRate,
   address _wallet,
   uint256 _cap,
+  uint256 _tokenCap,
   uint256 _initialAlisFundBalance,
   uint256 _goal,
-  uint256 _ratePreSale,
-  uint256 _rateWeek1,
-  uint256 _rateWeek2,
-  uint256 _rateWeek3,
   address[] _whiteList
   )
   Crowdsale(_startBlock, _endBlock, _baseRate, _wallet)
@@ -44,10 +45,8 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   RefundableCrowdsale(_goal)
   WhitelistedCrowdsale(_whiteList)
   {
-    ratePreSale = _ratePreSale;
-    rateWeek1 = _rateWeek1;
-    rateWeek2 = _rateWeek2;
-    rateWeek3 = _rateWeek3;
+    icoStartTime = _icoStartTime;
+    tokenCap = _tokenCap;
 
     token.mint(wallet, _initialAlisFundBalance);
   }
@@ -57,12 +56,26 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     return new AlisToken();
   }
 
+  // overriding CappedCrowdsale#validPurchase to add extra token cap logic
+  // @return true if investors can buy at the moment
+  function validPurchase() internal constant returns (bool) {
+    bool withinTokenCap = token.totalSupply().add(msg.value.mul(getRate())) <= tokenCap;
+    return super.validPurchase() && withinTokenCap;
+  }
+
+  // overriding CappedCrowdsale#hasEnded to add token cap logic
+  // @return true if crowdsale event has ended
+  function hasEnded() public constant returns (bool) {
+    bool tokenCapReached = token.totalSupply() >= tokenCap;
+    return super.hasEnded() || tokenCapReached;
+  }
+
   // overriding RefundableCrowdsale#finalization
   // - To store remaining ALIS tokens.
   // - To minting unfinished because of our consensus algorithm.
   //   - https://alisproject.github.io/whitepaper/whitepaper_v1.01.pdf
   function finalization() internal {
-    uint256 remaining = cap.sub(token.totalSupply());
+    uint256 remaining = tokenCap.sub(token.totalSupply());
 
     if (remaining > 0) {
       token.mint(wallet, remaining);
@@ -113,18 +126,18 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   function getRate() constant returns (uint256) {
     uint256 currentRate = rate;
 
-    if (now <= ICO_START_TIME) {
+    if (now <= icoStartTime) {
       // before 2017/09/01 02:00 UTC
-      currentRate = ratePreSale;
-    } else if (now <= ICO_START_TIME.add(1 weeks)) {
+      currentRate = RATE_PRE_SALE;
+    } else if (now <= icoStartTime.add(1 weeks)) {
       // before 2017/09/08 02:00 UTC
-      currentRate = rateWeek1;
-    } else if (now <= ICO_START_TIME.add(2 weeks)) {
+      currentRate = RATE_WEEK_1;
+    } else if (now <= icoStartTime.add(2 weeks)) {
       // before 2017/09/15 02:00 UTC
-      currentRate = rateWeek2;
-    } else if (now <= ICO_START_TIME.add(3 weeks)) {
+      currentRate = RATE_WEEK_2;
+    } else if (now <= icoStartTime.add(3 weeks)) {
       // before 2017/09/21 02:00 UTC
-      currentRate = rateWeek3;
+      currentRate = RATE_WEEK_3;
     }
 
     return currentRate;
@@ -137,6 +150,6 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
 
   // @return true if crowd sale is pre sale.
   function isPresale() internal constant returns (bool) {
-    return now <= ICO_START_TIME;
+    return now <= icoStartTime;
   }
 }

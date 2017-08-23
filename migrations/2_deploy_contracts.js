@@ -12,16 +12,15 @@ function alis(n) {
 }
 
 module.exports = function deployContracts(deployer) {
-  const actualCap = alis(crowdsaleParams.cap);
+  const actualCap = web3.toWei(crowdsaleParams.cap, 'ether');
+  const actualTokenCap = alis(crowdsaleParams.tokenCap);
   const actualInitialAlisFundBalance = alis(crowdsaleParams.initialAlisFundBalance);
   const actualGoal = web3.toWei(crowdsaleParams.goal, 'ether');
 
   deployer.deploy(AlisFund, fundParams.owners, fundParams.required).then(() =>
     // Set AlisFund address to wallet of AlisCrowdsale.
-    deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.endBlock,
-      rate.base, AlisFund.address, actualCap,
-      actualInitialAlisFundBalance, actualGoal,
-      rate.preSale, rate.week1, rate.week2, rate.week3,
-      crowdsaleParams.whiteList,
+    deployer.deploy(AlisCrowdsale, crowdsaleParams.startBlock, crowdsaleParams.icoStartTime,
+      crowdsaleParams.endBlock, rate.base, AlisFund.address, actualCap, actualTokenCap,
+      actualInitialAlisFundBalance, actualGoal, crowdsaleParams.whiteList,
     ));
 };

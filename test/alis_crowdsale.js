@@ -3,7 +3,7 @@ import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisFund, AlisCrowdsale, BigNumber, cap, rate,
+import { AlisToken, AlisFund, AlisCrowdsale, BigNumber, cap, tokenCap, rate, icoStartTime,
   initialAlisFundBalance, should, goal, setTimingToBaseTokenRate, whiteList,
 } from './helpers/alis_helper';
 
@@ -20,9 +20,8 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
+      rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
@@ -52,11 +51,11 @@ contract('AlisCrowdsale', ([investor, wallet, purchaser]) => {
       await actual.should.be.bignumber.equal(expect);
     });
 
-    // offering amount = cap - total supply.
+    // offering amount = token cap - total supply.
     it('should offering amount be 250 million tokens.', async function () {
       const expect = alis(250000000);
       const totalSupply = await this.token.totalSupply();
-      const crowdSaleCap = await this.crowdsale.cap();
+      const crowdSaleCap = await this.crowdsale.tokenCap();
       const actual = crowdSaleCap.sub(totalSupply);
       await actual.should.be.bignumber.equal(expect);
     });

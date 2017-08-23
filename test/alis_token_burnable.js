@@ -2,7 +2,7 @@ import alis from '../utilities/alis';
 import ether from './helpers/ether';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisCrowdsale, should, cap, rate,
+import { AlisToken, AlisCrowdsale, should, cap, tokenCap, rate, icoStartTime,
   initialAlisFundBalance, goal, whiteList,
 } from './helpers/alis_helper';
 
@@ -14,9 +14,8 @@ contract('AlisToken', ([wallet]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
+      rate.base, wallet, ether(cap), alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
 
     token = AlisToken.at(await this.crowdsale.token());
   });
