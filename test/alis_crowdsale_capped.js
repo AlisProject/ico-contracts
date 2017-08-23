@@ -3,7 +3,7 @@ import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisCrowdsale, cap, rate, BigNumber,
+import { AlisToken, AlisCrowdsale, icoStartTime, cap, tokenCap, rate, BigNumber,
   initialAlisFundBalance, goal, whiteList, setTimingToBaseTokenRate,
 } from './helpers/alis_helper';
 
@@ -18,31 +18,29 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList);
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
+      rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList);
 
     this.token = AlisToken.at(await this.crowdsale.token());
   });
 
   describe('creating a valid capped crowdsale', () => {
     it('should fail with zero cap', async function () {
-      await AlisCrowdsale.new(this.startBlock, this.endBlock,
-        rate.base, wallet, 0, initialAlisFundBalance, ether(goal),
-        rate.preSale, rate.week1, rate.week2, rate.week3, whiteList)
+      await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
+        rate.base, wallet, 0, initialAlisFundBalance, ether(goal), whiteList)
         .should.be.rejectedWith(EVMThrow);
     });
 
     it('should cap of ETH be 125,000', async function () {
       const expect = ether(125000);
-      const tokenCap = await this.crowdsale.cap();
-      await tokenCap.toNumber().should.be.bignumber.equal(expect);
+      const crowdSaleTokenCap = await this.crowdsale.cap();
+      await crowdSaleTokenCap.toNumber().should.be.bignumber.equal(expect);
     });
 
     it('should cap of ALIS token be 500 million', async function () {
       const expect = alis(500000000);
-      const tokenCap = await this.crowdsale.tokenCap();
-      await tokenCap.toNumber().should.be.bignumber.equal(expect);
+      const crowdSaleTokenCap = await this.crowdsale.tokenCap();
+      await crowdSaleTokenCap.toNumber().should.be.bignumber.equal(expect);
     });
   });
 

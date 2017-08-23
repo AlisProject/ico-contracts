@@ -1,11 +1,12 @@
 import moment from 'moment';
+import alis from '../utilities/alis';
 import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import increaseTime from './helpers/increaseTime';
 import EVMThrow from './helpers/EVMThrow';
 
 import {
-  AlisCrowdsale, cap, rate, initialAlisFundBalance, goal,
+  AlisCrowdsale, icoStartTime, cap, tokenCap, rate, initialAlisFundBalance, goal,
   setTimingToTokenSaleStart,
 } from './helpers/alis_helper';
 
@@ -16,9 +17,9 @@ contract('AlisCrowdsale', ([investor, owner, wallet, whiteListedMember, notWhite
     this.startBlock = web3.eth.blockNumber + 10;
     this.endBlock = web3.eth.blockNumber + 20;
 
-    this.crowdsale = await AlisCrowdsale.new(this.startBlock, this.endBlock,
-      rate.base, wallet, cap, initialAlisFundBalance, ether(goal),
-      rate.preSale, rate.week1, rate.week2, rate.week3, whiteList, { from: owner });
+    this.crowdsale = await AlisCrowdsale.new(this.startBlock, icoStartTime, this.endBlock,
+      rate.base, wallet, cap, alis(tokenCap), initialAlisFundBalance, ether(goal), whiteList,
+      { from: owner });
   });
 
   describe('creating a valid rate customizable crowdsale', () => {
