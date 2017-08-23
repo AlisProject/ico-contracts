@@ -3,7 +3,7 @@ import ether from './helpers/ether';
 import advanceToBlock from './helpers/advanceToBlock';
 import EVMThrow from './helpers/EVMThrow';
 
-import { AlisToken, AlisCrowdsale, cap, rate,
+import { AlisToken, AlisCrowdsale, cap, rate, BigNumber,
   initialAlisFundBalance, goal, whiteList, setTimingToBaseTokenRate,
 } from './helpers/alis_helper';
 
@@ -83,6 +83,17 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
 
       const afterRejected = web3.eth.getBalance(investor);
       await afterRejected.should.be.bignumber.equal(beforeSend);
+    });
+
+    // bug fix
+    it('should not over 500,000,000 ALIS token if just cap', async function () {
+      await this.crowdsale.send(cap.minus(lessThanCap)).should.be.fulfilled;
+      await this.crowdsale.send(lessThanCap).should.be.fulfilled;
+
+      const totalSupply = await new BigNumber(await this.token.totalSupply());
+      const actual = await totalSupply.lessThanOrEqualTo(alis(500000000));
+
+      await actual.should.equal(true);
     });
   });
 
