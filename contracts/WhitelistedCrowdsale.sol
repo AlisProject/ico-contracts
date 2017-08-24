@@ -28,7 +28,7 @@ contract WhitelistedCrowdsale is Crowdsale {
   }
 
   // check token amount limitation of member.
-  function checkLimit(uint256 _weiAmount) {
+  function checkLimit(uint256 _weiAmount) internal {
     if ( memberWeiRaised[msg.sender].add(msg.value) > MAX_WEI_RAISED ) {
       revert();
     }
@@ -37,7 +37,7 @@ contract WhitelistedCrowdsale is Crowdsale {
   }
 
   // @return true if address is whitelisted member.
-  function isWhiteListMember(address _member) constant returns (bool) {
+  function isWhiteListMember(address _member) public constant returns (bool) {
     return whiteList[_member] == true;
   }
 }
