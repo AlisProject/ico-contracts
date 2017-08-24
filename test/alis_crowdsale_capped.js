@@ -11,8 +11,12 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
   const lessThanCap = ether(cap).div(5);
 
   // OfferedValue / base rate = token cap of ether
-  // 250000000 / 2000 = 125000
+  // 250,000,000 / 2,000 = 125,000
   const tokenCapOfEther = ether(125000);
+
+  // Token cap of ether - ( Token cap / 100 ) / rate = Threshold of ether
+  // 125000 - ((500000000 / 100) / 2000) = 122,500
+  const thresholdOfEther = ether(122500);
 
   before(async () => {
     await setTimingToBaseTokenRate();
@@ -172,12 +176,6 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
       hasEnded.should.equal(false);
     });
 
-    it('should not be ended even if immediately before cap', async function () {
-      await this.crowdsale.send(ether(cap).minus(1));
-      const hasEnded = await this.crowdsale.hasEnded();
-      hasEnded.should.equal(false);
-    });
-
     it('should be ended if cap reached', async function () {
       await this.crowdsale.send(ether(cap));
       const hasEnded = await this.crowdsale.hasEnded();
@@ -190,16 +188,18 @@ contract('AlisCrowdsale', ([investor, wallet]) => {
       await advanceToBlock(this.startBlock - 1);
     });
 
-    it('should not be ended if under token cap', async function () {
+    it('should not be ended if under token cap threshold', async function () {
       let hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
-      await this.crowdsale.send(lessThanCap);
+      await this.crowdsale.send(thresholdOfEther.minus(ether(5000)));
       hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
     });
 
-    it('should not be ended even if immediately before token cap', async function () {
-      await this.crowdsale.send(tokenCapOfEther.minus(1));
+    it('should not be ended even if immediately before token cap threshold', async function () {
+      await this.crowdsale.send(thresholdOfEther.minus(ether(1)));
+
+
       const hasEnded = await this.crowdsale.hasEnded();
       hasEnded.should.equal(false);
     });

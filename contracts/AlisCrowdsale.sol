@@ -66,8 +66,9 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   // overriding CappedCrowdsale#hasEnded to add token cap logic
   // @return true if crowdsale event has ended
   function hasEnded() public constant returns (bool) {
-    bool tokenCapReached = token.totalSupply() >= tokenCap;
-    return super.hasEnded() || tokenCapReached;
+    uint256 threshold = tokenCap.div(100).mul(99);
+    bool thresholdReached = token.totalSupply() >= threshold;
+    return super.hasEnded() || thresholdReached;
   }
 
   // overriding RefundableCrowdsale#finalization
