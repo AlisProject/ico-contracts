@@ -13,7 +13,7 @@ contract WhitelistedCrowdsale is Crowdsale {
 
   /**
    * Amount of pre sale limitation per member.
-   * Could not add to AlisCrowdsale.json because of EVM said stack too deep.
+   * Could not add to Crowdsale.json because of EVM said stack too deep.
    */
   uint256 constant MAX_WEI_RAISED = 12.5 ether;
 

@@ -127,6 +127,9 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   function getRate() constant returns (uint256) {
     uint256 currentRate = rate;
 
+    // We decided using `now` alias of `block.timestamp` instead `block.number`
+    // Because of same reason:
+    // - https://github.com/OpenZeppelin/zeppelin-solidity/issues/350
     if (now <= icoStartTime) {
       // before 2017/09/01 02:00 UTC
       currentRate = RATE_PRE_SALE;
