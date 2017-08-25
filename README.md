@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/AlisProject/contracts/tree/master.svg?style=svg)](https://circleci.com/gh/AlisProject/contracts/tree/master)  
   
 # Contracts
-![ALIS](https://alismedia.jp/img/logo.png)
+[![ALIS](https://alismedia.jp/img/logo.png)](https://alismedia.jp)
 
 
 The contracts of [ALIS project](https://alismedia.jp).  
@@ -34,7 +34,11 @@ Let me know at Slack channel if you have any questions.
 - `yarn debug`
     - You can use `debugger;` function of node.
 
+# Linting
+- `yarn lint`
+
 # Deployment
+You should adjust `gas` and `gasPrice` at `truffle.js`.
 
 ## Private net & Test net
 - `yarn deploy`

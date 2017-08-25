@@ -4,6 +4,7 @@ pragma solidity ^0.4.13;
 import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
 import 'zeppelin/contracts/crowdsale/RefundableCrowdsale.sol';
 import 'zeppelin/contracts/token/MintableToken.sol';
+import 'zeppelin/contracts/lifecycle/Pausable.sol';
 import './WhitelistedCrowdsale.sol';
 import './AlisToken.sol';
 
@@ -11,7 +12,7 @@ import './AlisToken.sol';
 /**
  * The Crowdsale contract of ALIS project.
 */
-contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
+contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale, Pausable {
 
   /*
   * Token exchange rates of ETH and ALIS.
@@ -127,7 +128,10 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   function getRate() constant returns (uint256) {
     uint256 currentRate = rate;
 
-    if (now <= icoStartTime) {
+    // We decided using `now` alias of `block.timestamp` instead `block.number`
+    // Because of same reason:
+    // - https://github.com/OpenZeppelin/zeppelin-solidity/issues/350
+    if (isPresale()) {
       // before 2017/09/01 02:00 UTC
       currentRate = RATE_PRE_SALE;
     } else if (now <= icoStartTime.add(1 weeks)) {

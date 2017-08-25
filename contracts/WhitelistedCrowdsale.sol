@@ -13,7 +13,7 @@ contract WhitelistedCrowdsale is Crowdsale {
 
   /**
    * Amount of pre sale limitation per member.
-   * Could not add to AlisCrowdsale.json because of EVM said stack too deep.
+   * Could not add to Crowdsale.json because of EVM said stack too deep.
    */
   uint256 constant MAX_WEI_RAISED = 12.5 ether;
 
@@ -28,7 +28,7 @@ contract WhitelistedCrowdsale is Crowdsale {
   }
 
   // check token amount limitation of member.
-  function checkLimit(uint256 _weiAmount) {
+  function checkLimit(uint256 _weiAmount) internal {
     if ( memberWeiRaised[msg.sender].add(msg.value) > MAX_WEI_RAISED ) {
       revert();
     }
@@ -37,7 +37,7 @@ contract WhitelistedCrowdsale is Crowdsale {
   }
 
   // @return true if address is whitelisted member.
-  function isWhiteListMember(address _member) constant returns (bool) {
+  function isWhiteListMember(address _member) public constant returns (bool) {
     return whiteList[_member] == true;
   }
 }
