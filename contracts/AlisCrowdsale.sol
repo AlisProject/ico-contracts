@@ -4,6 +4,7 @@ pragma solidity ^0.4.13;
 import 'zeppelin/contracts/crowdsale/CappedCrowdsale.sol';
 import 'zeppelin/contracts/crowdsale/RefundableCrowdsale.sol';
 import 'zeppelin/contracts/token/MintableToken.sol';
+import 'zeppelin/contracts/lifecycle/Pausable.sol';
 import './WhitelistedCrowdsale.sol';
 import './AlisToken.sol';
 
@@ -11,7 +12,7 @@ import './AlisToken.sol';
 /**
  * The Crowdsale contract of ALIS project.
 */
-contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale {
+contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowdsale, Pausable {
 
   /*
   * Token exchange rates of ETH and ALIS.
