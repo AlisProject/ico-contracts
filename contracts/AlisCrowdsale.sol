@@ -131,7 +131,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
     // We decided using `now` alias of `block.timestamp` instead `block.number`
     // Because of same reason:
     // - https://github.com/OpenZeppelin/zeppelin-solidity/issues/350
-    if (now <= icoStartTime) {
+    if (isPresale()) {
       // before 2017/09/01 02:00 UTC
       currentRate = RATE_PRE_SALE;
     } else if (now <= icoStartTime.add(1 weeks)) {
