@@ -98,6 +98,7 @@ contract AlisCrowdsale is CappedCrowdsale, RefundableCrowdsale, WhitelistedCrowd
   // This is created to compatible PR below:
   // - https://github.com/OpenZeppelin/zeppelin-solidity/pull/317
   function buyTokens(address beneficiary) payable {
+    require(!paused);
     require(beneficiary != 0x0);
     require(validPurchase());
     require(saleAccepting());
