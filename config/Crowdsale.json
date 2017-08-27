@@ -1,7 +1,7 @@
 {
-  "startBlock": 900000,
+  "startBlock": 4202945,
   "icoStartTime": 1504231200,
-  "endBlock": 1000000,
+  "endBlock": 4418449,
   "cap": 125000,
   "tokenCap": 500000000,
   "initialAlisFundBalance": 250000000,
@@ -10,8 +10,9 @@
     "base": 2000
   },
   "whiteList": [
-    "0x9f874e3dd3b765430682a62649933acdaae1d424",
-    "0xcfc0545d7e6f2ce0e815a7120aecd485ea466f39",
-    "0xc28b49ab01335f2ccd17146f1cd7d6607ef984e1"
+    "0x8811DC45c333b508796747A9D58a5D0837aebda9",
+    "0x25fE5Cc83daFb156C5EF8738a0F0CeAcD8D10472",
+    "0x46113BEb1Cb87A6B38b0428B613db8671a6288Cb",
+    "0xcC33494EF8Bb1eaA9B940105bE97Ca1a10f7C0ae"
   ]
 }
