@@ -40,6 +40,19 @@ Let me know at Slack channel if you have any questions.
 # Deployment
 You should adjust `gas` and `gasPrice` at `truffle.js`.
 
+## Using private net(geth)
+Prerequisite: geth, MIST or EtherumWallet.  
+In case of MAC.
+
+1. `cd config`
+1. `mkdir datadir`
+1. `geth init private.genesis.json --datadir ./datadir/`
+1. Run private net.
+
+        geth --datadir ./datadir --networkid 10 --ipcpath /Users/USERNAME/Library/Ethereum/geth.ipc \
+        --rpc --rpcaddr "localhost" --rpcport "8545" --rpccorsdomain "*" --mine --minerthreads 4 --unlock 0,1 \
+        console 2>> /tmp/geth.log
+
 ## Private net & Test net
 - `yarn deploy`
 
