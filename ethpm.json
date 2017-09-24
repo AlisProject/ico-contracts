@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "zeppelin": "^1.2.0"
+    "zeppelin": "1.2.0"
   }
 }
