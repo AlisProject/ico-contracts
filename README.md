@@ -5,8 +5,7 @@
 
 
 The contracts of [ALIS project](https://alismedia.jp).  
-Let me know at Slack channel if you have any questions.  
-- https://alis-slack.herokuapp.com
+Let me know from our social channels if you have any questions.  
 
 # Solgraph
 [Solgraph](https://github.com/raineorshine/solgraph) image of `AlisCrowdsale.sol`.  
