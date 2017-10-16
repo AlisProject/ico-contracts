@@ -4,7 +4,7 @@
 [![ALIS](https://alismedia.jp/img/logo.png)](https://alismedia.jp)
 
 
-The contracts of [ALIS project](https://alismedia.jp).  
+The ICO contracts of [ALIS project](https://alismedia.jp).  
 Let me know from our social channels if you have any questions.  
 
 # Solgraph
