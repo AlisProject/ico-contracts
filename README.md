@@ -18,8 +18,8 @@ Let me know from our social channels if you have any questions.
 
 # Usage
 
-1. `git clone https://github.com/AlisProject/contracts.git`
-1. `cd contracts`
+1. `git clone https://github.com/AlisProject/ico-contracts.git`
+1. `cd ico-contracts`
 1. `yarn`
 1. `yarn truffle install`
 
