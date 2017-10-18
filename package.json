@@ -1,13 +1,13 @@
 {
-  "name": "contracts",
+  "name": "ico-contracts",
   "version": "1.0.0",
-  "description": "The contracts of ALIS project.",
+  "description": "The ICO contracts of ALIS project.",
   "main": "truffle.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AlisProject/contracts.git"
+    "url": "https://github.com/AlisProject/ico-contracts.git"
   },
-  "homepage": "https://github.com/AlisProject/contracts",
+  "homepage": "https://github.com/AlisProject/icp-contracts",
   "author": "sot528 <sot528@gmail.com>",
   "license": "GPL-3.0",
   "devDependencies": {
