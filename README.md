@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/AlisProject/ico-contracts/tree/master.svg?style=svg)](https://circleci.com/gh/AlisProject/ico-contracts/tree/master)  
   
-# Contracts
+# ICO Contracts
 [![ALIS](https://alismedia.jp/img/logo.png)](https://alismedia.jp)
 
 

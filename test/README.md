@@ -1,5 +1,5 @@
 # Tests
-The tests of ALIS contracts.
+The tests of ALIS ICO contracts.
 
 # memo
 - The order of tests is important now. Because of testrpc specification.

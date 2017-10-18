@@ -54,7 +54,7 @@ contract('AlisCrowdsale', ([owner, wallet, investor, notInvestor]) => {
     });
 
     // bug fix
-    // https://github.com/AlisProject/contracts/pull/14
+    // https://github.com/AlisProject/ico-contracts/pull/14
     it('should goal unit be wei(not ether)', async () => {
       const target = await AlisCrowdsale.deployed();
       const actual = await target.goal();
