@@ -8,10 +8,6 @@ import { AlisToken, AlisCrowdsale, icoStartTime, cap, tokenCap, rate,
 } from './helpers/alis_helper';
 
 contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
-  // Token cap of ether - ( Token cap / 100 ) / rate = Threshold of ether
-  // 125000 - ((500000000 / 100) / 2000) = 122,500
-  const thresholdOfEther = ether(122500);
-
   before(async () => {
     await setTimingToBaseTokenRate();
   });
@@ -32,21 +28,9 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
       await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
     });
 
-    it('can be finalized when token cap reached 99%', async function () {
-      await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.send(thresholdOfEther);
-      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
-    });
-
-    it('can be finalized when token cap over 99%', async function () {
-      await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.send(thresholdOfEther.plus(1));
-      await this.crowdsale.finalize({ from: owner }).should.be.fulfilled;
-    });
-
     it('can be finalized when just token cap reached', async function () {
       // OfferedValue / base rate = token cap of ether
-      // 250,000,000 / 2,000 = 125,000
+      // 250000000 / 2000 = 125000
       const tokenCapOfEther = ether(125000);
 
       await advanceToBlock(this.startBlock - 1);
@@ -156,12 +140,6 @@ contract('AlisCrowdsale', ([owner, wallet, thirdparty]) => {
 
   describe('reject finalize', () => {
     it('cannot be finalized before ending', async function () {
-      await this.crowdsale.finalize({ from: owner }).should.be.rejectedWith(EVMThrow);
-    });
-
-    it('can not be finalized when token cap is not reached 99%', async function () {
-      await advanceToBlock(this.startBlock - 1);
-      await this.crowdsale.send(thresholdOfEther.minus(1));
       await this.crowdsale.finalize({ from: owner }).should.be.rejectedWith(EVMThrow);
     });
 
